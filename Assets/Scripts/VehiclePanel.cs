@@ -1,12 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Vehicle : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler
+public class VehiclePanel : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler
 {
     public enum VEHICLE_TYPE{
         Excavator,
@@ -35,10 +36,7 @@ public class Vehicle : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragH
             _fuel = value;
             _fuelSlider.value = value;
         }
-        get
-        {
-            return _fuel;
-        }
+        get => _fuel;
     }
     
     [SerializeField,Range(0f,1f)]
@@ -46,6 +44,7 @@ public class Vehicle : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragH
 
     private MainManager _mainManager;
     private Canvas _canvas;
+    private IVehicleContainer _currentContainer;
     
     public float Status
     {
@@ -55,13 +54,10 @@ public class Vehicle : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragH
             _status = value;
             _statusSlider.value = value;
         }
-        get
-        {
-            return _status;
-        }
+        get => _status;
     }
 
-    public void Awake()
+    private void Awake()
     {
         _mainManager = FindObjectOfType<MainManager>();
         _canvas = FindObjectOfType<Canvas>();
@@ -70,10 +66,10 @@ public class Vehicle : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragH
         _statusLabel.text = MainManager.Translate("Status");
     }
 
-    public void Update()
+    private void Start()
     {
-        Fuel -= 0.0001f;
-        Status -= 0.0001f;
+        _currentContainer = GetComponentInParent<IVehicleContainer>();
+        _currentContainer.AddVehicle(this);
     }
 
     public void OnDrag(PointerEventData data)
@@ -98,20 +94,19 @@ public class Vehicle : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragH
     {
         List<RaycastResult> results = new List<RaycastResult>();
         _canvas.GetComponent<GraphicRaycaster>().Raycast(eventData,results);
-        foreach (var result in results)
+        var vehicleContainers = results.Where(result => result.gameObject.GetComponent<IVehicleContainer>() != null && result.gameObject.GetComponent<IVehicleContainer>() != _currentContainer).ToArray();
+        if (vehicleContainers.Length > 0)
         {
-            if (result.gameObject.GetComponent<ConstructionPanel>() || result.gameObject.GetComponent<VehiclesPanel>())
-            {
-                
-                var rect = result.gameObject.GetComponentInChildren<ScrollRect>();
-                transform.SetParent(rect.content,false);
-                return;
-            }
+            var container = vehicleContainers[0].gameObject.GetComponent<IVehicleContainer>();
+            _currentContainer?.RemoveVehicle(this);
+            _currentContainer = container;
+            _currentContainer.AddVehicle(this);
         }
-        transform.parent = _prevParent;
-        transform.position = _prevPos;
+        else
+        {
+            transform.parent.SetParent(_prevParent);
+            transform.position = _prevPos;
+        }
     }
-
-    
     
 }

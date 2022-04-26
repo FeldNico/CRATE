@@ -1818,7 +1818,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.0000075940043, y: -15.101318}
+  m_AnchoredPosition: {x: 0.0000075940043, y: -446.00006}
   m_SizeDelta: {x: 0, y: -446}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1632529423
@@ -2428,4 +2428,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff328da2a8cbf4042bc57f825fac5cc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VehiclePrefab: {fileID: 4604177485997749652, guid: 77cf133cb5029e549b10b0aa55c215d6, type: 3}
+  ExcavatorPrefab: {fileID: 4604177485997749652, guid: 77cf133cb5029e549b10b0aa55c215d6, type: 3}
+  TruckPrefab: {fileID: 4604177485997749652, guid: d74007e1a64f5ab48bcd76612833a44d, type: 3}
