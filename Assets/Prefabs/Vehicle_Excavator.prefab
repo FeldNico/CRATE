@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 6704609048131166174}
   - component: {fileID: 6704609048131166113}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Status_Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -248,7 +248,7 @@ GameObject:
   - component: {fileID: 6704609048284374946}
   - component: {fileID: 6704609048284374949}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Fuel_Label
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -563,7 +563,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3597666361051338865, guid: 8335bd2e35e11194ca8ae3a7b865159a, type: 3}
       propertyPath: m_Name
-      value: HealthBar_LR (1)
+      value: Status_Slider
       objectReference: {fileID: 0}
     - target: {fileID: 3687905193769816575, guid: 8335bd2e35e11194ca8ae3a7b865159a, type: 3}
       propertyPath: m_Value
@@ -712,7 +712,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3597666361051338865, guid: 8335bd2e35e11194ca8ae3a7b865159a, type: 3}
       propertyPath: m_Name
-      value: HealthBar_LR
+      value: Fuel_Slider
       objectReference: {fileID: 0}
     - target: {fileID: 3687905193769816575, guid: 8335bd2e35e11194ca8ae3a7b865159a, type: 3}
       propertyPath: m_Value

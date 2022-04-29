@@ -64,6 +64,8 @@ public class VehiclePanel : MonoBehaviour, IDragHandler, IEndDragHandler, IBegin
         _nameLabel.text = MainManager.Translate(Enum.GetName(typeof(VEHICLE_TYPE), _type));
         _fuelLabel.text = MainManager.Translate("Fuel");
         _statusLabel.text = MainManager.Translate("Status");
+        _fuelSlider.value = Fuel;
+        _statusSlider.value = Status;
     }
 
     private void Start()

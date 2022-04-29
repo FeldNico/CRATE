@@ -11,19 +11,23 @@ public class VehiclesPanel : MonoBehaviour, IVehicleContainer
     public GameObject TruckPrefab;
     
     private ScrollRect _scrollRect;
+    private Fuelstation _fuelstation;
 
     private List<VehiclePanel> _vehicles = new();
 
     private void Awake()
     {
         _scrollRect = GetComponentInChildren<ScrollRect>();
+        _fuelstation = FindObjectOfType<Fuelstation>();
     }
 
     private void Start()
     {
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 2; i++)
         {
             var go = Instantiate(ExcavatorPrefab);
+            go.transform.SetParent(_scrollRect.content.transform,false);
+            go = Instantiate(TruckPrefab);
             go.transform.SetParent(_scrollRect.content.transform,false);
             go = Instantiate(TruckPrefab);
             go.transform.SetParent(_scrollRect.content.transform,false);
@@ -34,8 +38,12 @@ public class VehiclesPanel : MonoBehaviour, IVehicleContainer
     {
         foreach (var vehicle in _vehicles)
         {
-            vehicle.Fuel += 0.0001f;
-            vehicle.Status += 0.0001f;
+            if (_fuelstation.Fuel > 0 && vehicle.Fuel < 1f)
+            {
+                vehicle.Fuel += 0.0002f;
+                _fuelstation.Fuel -= 0.0002f * 0.1f;
+            }
+            vehicle.Status += 0.0002f;
         }
     }
 
