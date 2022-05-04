@@ -3,10 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class ConstructionPanel : MonoBehaviour, IVehicleContainer
 {
+
+    public static UnityAction<ConstructionPanel> OnConstructionFinished;
 
     [SerializeField] private TMP_Text _nameLabel;
     [SerializeField] private TMP_Text _hintLabel;
@@ -86,6 +89,7 @@ public class ConstructionPanel : MonoBehaviour, IVehicleContainer
             }
             else
             {
+                OnConstructionFinished.Invoke(this);
                 Destroy(gameObject);
             }
             

@@ -77,7 +77,7 @@ public class VehiclePanel : MonoBehaviour, IDragHandler, IEndDragHandler, IBegin
     public void OnDrag(PointerEventData data)
     {
         Vector3 globalMousePos;
-        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(data.pointerEnter.transform as RectTransform, data.position, data.pressEventCamera, out globalMousePos))
+        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(_canvas.transform as RectTransform, data.position, data.pressEventCamera, out globalMousePos))
         {
             transform.position = globalMousePos;
         }
@@ -89,7 +89,7 @@ public class VehiclePanel : MonoBehaviour, IDragHandler, IEndDragHandler, IBegin
     {
         _prevParent = transform.parent;
         _prevPos = transform.position;
-        transform.SetParent(_canvas.transform,false);
+        transform.SetParent(_canvas.transform, false);
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -106,8 +106,8 @@ public class VehiclePanel : MonoBehaviour, IDragHandler, IEndDragHandler, IBegin
         }
         else
         {
-            transform.parent.SetParent(_prevParent);
             transform.position = _prevPos;
+            transform.SetParent(_prevParent,false);
         }
     }
     
