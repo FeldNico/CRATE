@@ -1,114 +1,74 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class VehiclePanel : MonoBehaviour, IDragHandler, IEndDragHandler, IBeginDragHandler
+public class VehiclePanel: MonoBehaviour
 {
     public enum VEHICLE_TYPE{
         Excavator,
         Truck,
     }
-
-    [SerializeField]
-    private VEHICLE_TYPE _type;
-
-    public VEHICLE_TYPE Type => _type;
     
-    [SerializeField] private TMP_Text _nameLabel;
-    [SerializeField] private TMP_Text _fuelLabel;
-    [SerializeField] private Slider _fuelSlider;
-    [SerializeField] private TMP_Text _statusLabel;
-    [SerializeField] private Slider _statusSlider;
-
-    [SerializeField,Range(0f,1f)]
-    private float _fuel = 1f;
-
-    public float Fuel
-    {
-        set
-        {
-            value = Math.Clamp(value, 0, 1f);
-            _fuel = value;
-            _fuelSlider.value = value;
-        }
-        get => _fuel;
-    }
+    public VEHICLE_TYPE Type;
     
-    [SerializeField,Range(0f,1f)]
-    private float _status = 1f;
+    [SerializeField] private TMP_Text _name;
 
-    private MainManager _mainManager;
-    private Canvas _canvas;
-    private IVehicleContainer _currentContainer;
+    [SerializeField] private TMP_Text _count;
+
+    [SerializeField] private Button _addButton;
     
-    public float Status
-    {
-        set
-        {
-            value = Math.Clamp(value, 0, 1f);
-            _status = value;
-            _statusSlider.value = value;
-        }
-        get => _status;
-    }
+    [SerializeField] private Button _removeButton;
+
+    private FleetPanel _fleetPanel;
 
     private void Awake()
     {
-        _mainManager = FindObjectOfType<MainManager>();
-        _canvas = FindObjectOfType<Canvas>();
-        _nameLabel.text = MainManager.Translate(Enum.GetName(typeof(VEHICLE_TYPE), _type));
-        _fuelLabel.text = MainManager.Translate("Fuel");
-        _statusLabel.text = MainManager.Translate("Status");
-        _fuelSlider.value = Fuel;
-        _statusSlider.value = Status;
+        _fleetPanel = FindObjectOfType<FleetPanel>();
     }
 
-    private void Start()
+    private void AddVehicle()
     {
-        _currentContainer = GetComponentInParent<IVehicleContainer>();
-        _currentContainer.AddVehicle(this);
-    }
-
-    public void OnDrag(PointerEventData data)
-    {
-        Vector3 globalMousePos;
-        if (RectTransformUtility.ScreenPointToWorldPointInRectangle(_canvas.transform as RectTransform, data.position, data.pressEventCamera, out globalMousePos))
+        if (_fleetPanel.RemoveVehicle(Type))
         {
-            transform.position = globalMousePos;
-        }
-    }
-
-    private Transform _prevParent;
-    private Vector3 _prevPos;
-    public void OnBeginDrag(PointerEventData eventData)
-    {
-        _prevParent = transform.parent;
-        _prevPos = transform.position;
-        transform.SetParent(_canvas.transform, false);
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        List<RaycastResult> results = new List<RaycastResult>();
-        _canvas.GetComponent<GraphicRaycaster>().Raycast(eventData,results);
-        var vehicleContainers = results.Where(result => result.gameObject.GetComponent<IVehicleContainer>() != null && result.gameObject.GetComponent<IVehicleContainer>() != _currentContainer).ToArray();
-        if (vehicleContainers.Length > 0)
-        {
-            var container = vehicleContainers[0].gameObject.GetComponent<IVehicleContainer>();
-            _currentContainer?.RemoveVehicle(this);
-            _currentContainer = container;
-            _currentContainer.AddVehicle(this);
-        }
-        else
-        {
-            transform.position = _prevPos;
-            transform.SetParent(_prevParent,false);
+            SetCount(GetCount()+1);
         }
     }
     
+    private void RemoveVehicle()
+    {
+        if (GetCount() == 0)
+        {
+            return;
+        }
+        _fleetPanel.AddVehicle(Type);
+        SetCount(GetCount()-1);
+    }
+
+    public void SetName(string name)
+    {
+        _name.text = name;
+    }
+    
+    public void SetCount(int count)
+    {
+        _count.text = count.ToString();
+    }
+
+    public int GetCount()
+    {
+        return int.Parse(_count.text);
+    }
+    
+    private void OnEnable()
+    {
+        _addButton.onClick.AddListener(AddVehicle);
+        _removeButton.onClick.AddListener(RemoveVehicle);
+    }
+    
+    private void OnDisable()
+    {
+        _addButton.onClick.RemoveListener(AddVehicle);
+        _removeButton.onClick.RemoveListener(RemoveVehicle);
+    }
 }
