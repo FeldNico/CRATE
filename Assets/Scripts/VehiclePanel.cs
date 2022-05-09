@@ -6,8 +6,10 @@ using UnityEngine.UI;
 public class VehiclePanel: MonoBehaviour
 {
     public enum VEHICLE_TYPE{
+        Roller,
         Excavator,
         Truck,
+        DemolitionCrane,
     }
     
     public VEHICLE_TYPE Type;

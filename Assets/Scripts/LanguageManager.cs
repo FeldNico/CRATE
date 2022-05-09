@@ -10,7 +10,7 @@ public class LanguageManager : MonoBehaviour
     [SerializeField]
     private LanguageDictionary _dictionary;
     
-    private Dictionary<TMP_Text, (LanguageDictionary.Language, string)> _cachedTexts = new();
+    private Dictionary<TMP_Text, (LanguageDictionary.Language, string,string)> _cachedTexts = new();
 
     private void Awake()
     {
@@ -29,11 +29,11 @@ public class LanguageManager : MonoBehaviour
     {
         foreach (var text in FindObjectsOfType<TMP_Text>())
         {
-            if (!_cachedTexts.ContainsKey(text) || _cachedTexts[text].Item1 != _dictionary.CurrentLanguage)
+            if (!_cachedTexts.ContainsKey(text) || _cachedTexts[text].Item1 != _dictionary.CurrentLanguage || _cachedTexts[text].Item3 != _dictionary.Translate(_cachedTexts[text].Item2) )
             {
                 var key = _cachedTexts.ContainsKey(text) ? _cachedTexts[text].Item2 : text.text;
                 text.text = _dictionary.Translate(key);
-                _cachedTexts[text] = (_dictionary.CurrentLanguage, key);
+                _cachedTexts[text] = (_dictionary.CurrentLanguage, key,text.text);
             }
         }
     }
