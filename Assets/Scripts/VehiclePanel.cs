@@ -5,22 +5,52 @@ using UnityEngine.UI;
 
 public class VehiclePanel: MonoBehaviour
 {
-    public enum VEHICLE_TYPE{
-        Roller,
-        Excavator,
-        Truck,
-        DemolitionCrane,
-    }
+
+    public bool AreButtonsEnabled = true;
     
-    public VEHICLE_TYPE Type;
+    public Config.Config.VEHICLE_TYPE Type;
     
     [SerializeField] private TMP_Text _name;
 
-    [SerializeField] private TMP_Text _count;
+    [SerializeField] private TMP_Text _countLabel;
 
     [SerializeField] private Button _addButton;
     
     [SerializeField] private Button _removeButton;
+
+    private int _count = 0;
+
+    public int Count
+    {
+        get => _count;
+        set
+        {
+            _count = Math.Clamp(value,0,_maxCount);
+            if (GetComponentInParent<FleetPanel>() != null)
+            {
+                _countLabel.text = _count.ToString();
+            }
+
+            if (GetComponentInParent<BuildingSitePhasePanel>() != null)
+            {
+                _countLabel.text = _count.ToString()+"/"+_maxCount;
+            }
+        }
+    }
+    
+    private int _maxCount = Int32.MaxValue;
+    public int MaxCount
+    {
+        get => _maxCount;
+        set
+        {
+            _maxCount = Math.Clamp(value,0,Int32.MaxValue);
+            if (GetComponentInParent<BuildingSitePhasePanel>() != null)
+            {
+                _countLabel.text = _count.ToString()+"/"+_maxCount;
+            }
+        }
+    }
 
     private FleetPanel _fleetPanel;
 
@@ -31,37 +61,40 @@ public class VehiclePanel: MonoBehaviour
 
     private void AddVehicle()
     {
-        if (_fleetPanel.RemoveVehicle(Type))
+        if (Count < MaxCount && _fleetPanel.RemoveVehicle(Type))
         {
-            SetCount(GetCount()+1);
+            Count++;
         }
     }
     
     private void RemoveVehicle()
     {
-        if (GetCount() == 0)
+        if (Count > 0)
         {
-            return;
+            _fleetPanel.AddVehicle(Type);
+            Count--;
         }
-        _fleetPanel.AddVehicle(Type);
-        SetCount(GetCount()-1);
     }
-
+    
+    public void DisableButtons()
+    {
+        AreButtonsEnabled = false;
+        _addButton.interactable = false;
+        _removeButton.interactable = false;
+    }
+    
+    public void EnableButtons()
+    {
+        AreButtonsEnabled = true;
+        _addButton.interactable = true;
+        _removeButton.interactable = true;
+    }
+    
     public void SetName(string name)
     {
         _name.text = name;
     }
-    
-    public void SetCount(int count)
-    {
-        _count.text = count.ToString();
-    }
 
-    public int GetCount()
-    {
-        return int.Parse(_count.text);
-    }
-    
     private void OnEnable()
     {
         _addButton.onClick.AddListener(AddVehicle);
@@ -72,5 +105,12 @@ public class VehiclePanel: MonoBehaviour
     {
         _addButton.onClick.RemoveListener(AddVehicle);
         _removeButton.onClick.RemoveListener(RemoveVehicle);
+    }
+
+    public void Initalize(Config.Config.VehicleStruct vehicleStruct)
+    {
+        Type = vehicleStruct.Type;
+        MaxCount = vehicleStruct.Count;
+        SetName(Enum.GetName(typeof(Config.Config.VEHICLE_TYPE), Type));
     }
 }

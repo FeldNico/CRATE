@@ -14,20 +14,19 @@ public class FleetPanel : MonoBehaviour
     private RectTransform _content;
     public RectTransform Content => _content;
 
-    private Dictionary<VehiclePanel.VEHICLE_TYPE, VehiclePanel> _vehicles = new();
+    private Dictionary<Config.Config.VEHICLE_TYPE, VehiclePanel> _vehicles = new();
 
     private void Start()
     {
-        foreach (var vehicleType in Enum.GetValues(typeof(VehiclePanel.VEHICLE_TYPE)).Cast<VehiclePanel.VEHICLE_TYPE>())
+        foreach (var fleetStruct in FindObjectOfType<MainManager>().Config.Fleet)
         {
-            var vehicleTypeName = Enum.GetName(typeof(VehiclePanel.VEHICLE_TYPE), vehicleType);
+            var vehicleTypeName = Enum.GetName(typeof(Config.Config.VEHICLE_TYPE), fleetStruct.Type);
             var vehiclePanel = Instantiate(VehiclePrefab).GetComponent<VehiclePanel>();
-            vehiclePanel.SetCount(10);
-            vehiclePanel.SetName(vehicleTypeName);
-            vehiclePanel.Type = vehicleType;
-            _vehicles[vehicleType] = vehiclePanel;
             vehiclePanel.transform.SetParent(_content, false);
-            
+            vehiclePanel.Count = fleetStruct.Count;
+            vehiclePanel.SetName(vehicleTypeName);
+            vehiclePanel.Type = fleetStruct.Type;
+            _vehicles[fleetStruct.Type] = vehiclePanel;
             foreach (var button in vehiclePanel.GetComponentsInChildren<Button>())
             {
                 button.gameObject.SetActive(false);
@@ -35,25 +34,50 @@ public class FleetPanel : MonoBehaviour
         }
     }
 
-    public bool RemoveVehicle(VehiclePanel.VEHICLE_TYPE type)
+    public bool RemoveVehicle(Config.Config.VEHICLE_TYPE type)
     {
         var count = GetVehicleCount(type);
         if (count == 0)
         {
             return false;
         }
-        
-        _vehicles[type].SetCount(count-1);
+
+        _vehicles[type].Count--;
         return true;
     }
 
-    public void AddVehicle(VehiclePanel.VEHICLE_TYPE type)
+    public void AddVehicle(Config.Config.VEHICLE_TYPE type)
     {
-        _vehicles[type].SetCount(GetVehicleCount(type)+1);
+        _vehicles[type].Count++;
     }
 
-    public int GetVehicleCount(VehiclePanel.VEHICLE_TYPE type)
+    public int GetVehicleCount(Config.Config.VEHICLE_TYPE type)
     {
-        return _vehicles[type].GetCount();
+        return _vehicles[type].Count;
+    }
+    
+    private int GetVehicleCountByType(Config.Config.VEHICLE_TYPE type)
+    {
+        switch (type)
+        {
+            case Config.Config.VEHICLE_TYPE.Excavator:
+            {
+                return 4;
+            }
+            case Config.Config.VEHICLE_TYPE.Roller:
+            {
+                return 3;
+            }
+            case Config.Config.VEHICLE_TYPE.Truck:
+            {
+                return 5;
+            }
+            case Config.Config.VEHICLE_TYPE.DemolitionCrane:
+            {
+                return 1;
+            }
+        }
+
+        return 0;
     }
 }
