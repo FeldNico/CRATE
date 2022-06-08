@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -7,10 +8,28 @@ public class VehiclePanel: MonoBehaviour
 {
 
     public bool AreButtonsEnabled = true;
+
+    public Config.Config.VEHICLE_TYPE Type
+    {
+        set
+        {
+            if (_image != null)
+            {
+                var name = Enum.GetName(typeof(Config.Config.VEHICLE_TYPE), value);
+                _image.sprite = Resources.Load<Sprite>(Path.Combine("Images", name));
+            }
+
+            _type = value;
+        }
+        get
+        {
+            return _type;
+        }
+    }
     
-    public Config.Config.VEHICLE_TYPE Type;
+    private Config.Config.VEHICLE_TYPE _type;
     
-    [SerializeField] private TMP_Text _name;
+    [SerializeField] private Image _image;
 
     [SerializeField] private TMP_Text _countLabel;
 
@@ -33,7 +52,7 @@ public class VehiclePanel: MonoBehaviour
 
             if (GetComponentInParent<BuildingSitePhasePanel>() != null)
             {
-                _countLabel.text = _count.ToString()+"/"+_maxCount;
+                _countLabel.text = _count+"/"+_maxCount;
             }
         }
     }
@@ -65,6 +84,10 @@ public class VehiclePanel: MonoBehaviour
         {
             Count++;
         }
+        else
+        {
+            FindObjectOfType<PointsPanel>().Points--;
+        }
     }
     
     private void RemoveVehicle()
@@ -73,6 +96,10 @@ public class VehiclePanel: MonoBehaviour
         {
             _fleetPanel.AddVehicle(Type);
             Count--;
+        }
+        else
+        {
+            FindObjectOfType<PointsPanel>().Points--;
         }
     }
     
@@ -88,11 +115,6 @@ public class VehiclePanel: MonoBehaviour
         AreButtonsEnabled = true;
         _addButton.interactable = true;
         _removeButton.interactable = true;
-    }
-    
-    public void SetName(string name)
-    {
-        _name.text = name;
     }
 
     private void OnEnable()
@@ -111,6 +133,7 @@ public class VehiclePanel: MonoBehaviour
     {
         Type = vehicleStruct.Type;
         MaxCount = vehicleStruct.Count;
-        SetName(Enum.GetName(typeof(Config.Config.VEHICLE_TYPE), Type));
+        
+        //SetName(Enum.GetName(typeof(Config.Config.VEHICLE_TYPE), Type));
     }
 }

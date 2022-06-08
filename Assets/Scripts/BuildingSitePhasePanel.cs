@@ -16,6 +16,10 @@ public class BuildingSitePhasePanel : MonoBehaviour
     [SerializeField] private TMP_Text _nameLabel;
 
     [SerializeField] private Slider _progressBar;
+    
+    [SerializeField] private Slider _timer;
+
+    [SerializeField] private TMP_Text _daysLeftLabel;
 
     [SerializeField] private Button _startButton;
 
@@ -23,10 +27,12 @@ public class BuildingSitePhasePanel : MonoBehaviour
 
     private Config.Config.PhaseType _type;
     private List<VehiclePanel> _vehiclePanels = new List<VehiclePanel>();
+    private float _creationDay;
     private bool _isProgressing;
+    private TimeManager _timeManager;
+    private Config.Config.BuildingPhaseStruct _struct;
 
-
-    public void Initalize(Config.Config.BuildingPhaseStruct buildingPhaseStruct)
+    public void Initialize(Config.Config.BuildingPhaseStruct buildingPhaseStruct)
     {
         _type = buildingPhaseStruct.Type;
         _nameLabel.text = Enum.GetName(typeof(Config.Config.PhaseType), _type);
@@ -38,10 +44,12 @@ public class BuildingSitePhasePanel : MonoBehaviour
             _vehiclePanels.Add(vehicle);
         }
 
+        _struct = buildingPhaseStruct;
         _startButton.onClick.AddListener(PerformPhase);
+        _timeManager = FindObjectOfType<TimeManager>();
     }
 
-    private async void PerformPhase()
+    private void PerformPhase()
     {
         _isProgressing = true;
         _startButton.interactable = false;
@@ -50,17 +58,23 @@ public class BuildingSitePhasePanel : MonoBehaviour
             panel.DisableButtons();
         }
         
-        var startTime = Time.time;
+        var startDay = _timeManager.Day;
         _progressBar.value = 0f;
-        while (Time.time < startTime + 15f)
+
+        StartCoroutine(Animate());
+        IEnumerator Animate()
         {
-            await Task.Delay(1);
-            _progressBar.value = (Time.time - startTime)/15f;
+            while (_timeManager.Day < startDay + 3)
+            {
+                yield return null;
+                _progressBar.value = (_timeManager.Day - startDay)/3f;
+            }
+            _progressBar.value = 1;
+            _startButton.interactable = true;
+            _isProgressing = false;
+            FindObjectOfType<PointsPanel>().Points += 10;
+            Destroy(gameObject);
         }
-        _progressBar.value = 1;
-        _startButton.interactable = true;
-        _isProgressing = false;
-        Destroy(gameObject);
     }
 
     private void Update()
@@ -69,6 +83,16 @@ public class BuildingSitePhasePanel : MonoBehaviour
         {
             return;
         }
+
+        /*
+        _timer.value = 1- (_timeManager.Day - _creationDay) / MaxDay;
+
+        if (_timer.value <= float.Epsilon)
+        {
+            FindObjectOfType<PointsPanel>().Points -= 5;
+            Destroy(gameObject);
+        }
+        */
 
         if (transform.parent.GetChild(0) == transform)
         {
