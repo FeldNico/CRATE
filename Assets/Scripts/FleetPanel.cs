@@ -23,6 +23,7 @@ public class FleetPanel : MonoBehaviour
             vehiclePanel.transform.SetParent(_content, false);
             vehiclePanel.Count = fleetStruct.Count;
             vehiclePanel.Type = fleetStruct.Type;
+            
             _vehicles[fleetStruct.Type] = vehiclePanel;
             foreach (var button in vehiclePanel.GetComponentsInChildren<Button>())
             {

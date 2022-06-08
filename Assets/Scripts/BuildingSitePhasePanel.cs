@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,11 +25,10 @@ public class BuildingSitePhasePanel : MonoBehaviour
     [SerializeField] private RectTransform _content;
 
     private Config.Config.PhaseType _type;
-    private List<VehiclePanel> _vehiclePanels = new List<VehiclePanel>();
+    private List<VehiclePanel> _vehiclePanels = new();
     private float _creationDay;
     private bool _isProgressing;
     private TimeManager _timeManager;
-    private Config.Config.BuildingPhaseStruct _struct;
 
     public void Initialize(Config.Config.BuildingPhaseStruct buildingPhaseStruct)
     {
@@ -43,8 +41,7 @@ public class BuildingSitePhasePanel : MonoBehaviour
             vehicle.Initalize(vehicleStruct);
             _vehiclePanels.Add(vehicle);
         }
-
-        _struct = buildingPhaseStruct;
+        
         _startButton.onClick.AddListener(PerformPhase);
         _timeManager = FindObjectOfType<TimeManager>();
     }
@@ -83,16 +80,6 @@ public class BuildingSitePhasePanel : MonoBehaviour
         {
             return;
         }
-
-        /*
-        _timer.value = 1- (_timeManager.Day - _creationDay) / MaxDay;
-
-        if (_timer.value <= float.Epsilon)
-        {
-            FindObjectOfType<PointsPanel>().Points -= 5;
-            Destroy(gameObject);
-        }
-        */
 
         if (transform.parent.GetChild(0) == transform)
         {

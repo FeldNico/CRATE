@@ -17,6 +17,7 @@ public class VehiclePanel: MonoBehaviour
             {
                 var name = Enum.GetName(typeof(Config.Config.VEHICLE_TYPE), value);
                 _image.sprite = Resources.Load<Sprite>(Path.Combine("Images", name));
+                _name.text = name;
             }
 
             _type = value;
@@ -28,6 +29,8 @@ public class VehiclePanel: MonoBehaviour
     }
     
     private Config.Config.VEHICLE_TYPE _type;
+
+    [SerializeField] private TMP_Text _name;
     
     [SerializeField] private Image _image;
 
@@ -133,7 +136,5 @@ public class VehiclePanel: MonoBehaviour
     {
         Type = vehicleStruct.Type;
         MaxCount = vehicleStruct.Count;
-        
-        //SetName(Enum.GetName(typeof(Config.Config.VEHICLE_TYPE), Type));
     }
 }
