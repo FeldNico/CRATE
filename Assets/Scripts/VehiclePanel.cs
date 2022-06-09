@@ -48,11 +48,10 @@ public class VehiclePanel: MonoBehaviour
         set
         {
             _count = Math.Clamp(value,0,_maxCount);
-            if (GetComponentInParent<FleetPanel>() != null)
+            if (GetComponentInParent<FleetPanel>() != null || GetComponentInParent<AssignmentPanel>() != null)
             {
                 _countLabel.text = _count.ToString();
             }
-
             if (GetComponentInParent<BuildingSitePhasePanel>() != null)
             {
                 _countLabel.text = _count+"/"+_maxCount;
@@ -67,7 +66,7 @@ public class VehiclePanel: MonoBehaviour
         set
         {
             _maxCount = Math.Clamp(value,0,Int32.MaxValue);
-            if (GetComponentInParent<BuildingSitePhasePanel>() != null)
+            if (GetComponentInParent<BuildingSitePhasePanel>() != null )
             {
                 _countLabel.text = _count.ToString()+"/"+_maxCount;
             }
@@ -132,9 +131,18 @@ public class VehiclePanel: MonoBehaviour
         _removeButton.onClick.RemoveListener(RemoveVehicle);
     }
 
-    public void Initalize(Config.Config.VehicleStruct vehicleStruct)
+    public void Initalize(Config.Config.VEHICLE_TYPE type, int count)
     {
-        Type = vehicleStruct.Type;
-        MaxCount = vehicleStruct.Count;
+        Type = type;
+        if (GetComponentInParent<BuildinSitesPanel>())
+        {
+            MaxCount = count;
+        }
+        else
+        {
+            Count = count;
+            _addButton.gameObject.SetActive(false);
+            _removeButton.gameObject.SetActive(false);
+        }
     }
 }

@@ -7,35 +7,29 @@ using UnityEngine;
 public class TimeManager : MonoBehaviour
 {
     public float DayDuration = 10f;
-    
-    public int Day
+
+    public float Day
     {
-        get => _day;
-        private set
-        {
-            _day = value;
-            if (_dayLabel != null)
-            {
-                _dayLabel.text = _day.ToString();
-            }
-        }
+        get;
+        private set;
     }
 
     [SerializeField]
     private TMP_Text _dayLabel;
-    private int _day;
-    
-    public void Start()
+
+    private void Update()
     {
-        Day = 0;
-        StartCoroutine(WaitForDay());
-        IEnumerator WaitForDay()
+        Day = (int) (Time.time / DayDuration) + (Time.time % DayDuration) / DayDuration;
+        var dayString = ((int) Day).ToString();
+        if (_dayLabel != null && _dayLabel.text != dayString)
         {
-            while (true)
-            {
-                yield return new WaitForSeconds(DayDuration);
-                Day++;
-            }
+            _dayLabel.text = dayString;
         }
+    }
+
+    public float GetTimeStampInDays(int days)
+    {
+        var dayms = (int) (Time.time / DayDuration) + Time.time % DayDuration;
+        return Time.time - (dayms - Day) + days * DayDuration;
     }
 }

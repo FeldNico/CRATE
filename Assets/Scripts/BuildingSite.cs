@@ -18,14 +18,14 @@ public class BuildingSite : MonoBehaviour
     private Dictionary<Config.Config.VEHICLE_TYPE, int> _vehicleDict = new();
     private Config.Config.BuildingSiteStruct _struct;
     private TimeManager _timeManager;
-    private float _startDay;
+    private float _timestamp;
 
     public void Instantiate(Config.Config.BuildingSiteStruct buildingSiteStruct)
     {
         _struct = buildingSiteStruct;
         _nameLabel.text = Enum.GetName(typeof(Config.Config.BuildingSiteCategory),buildingSiteStruct.Category);
         _timeManager = FindObjectOfType<TimeManager>();
-        _startDay = _timeManager.Day;
+        _timestamp = _timeManager.GetTimeStampInDays(_struct.Phases.Count * 5);
         (_daysLabel as TextMeshProUGUI).faceColor = Color.red;
         foreach (var buildingPhaseStruct in buildingSiteStruct.Phases)
         {
@@ -37,18 +37,20 @@ public class BuildingSite : MonoBehaviour
 
     private void Update()
     {
-        var daysLeft = _struct.Phases.Count * 5 - (_timeManager.Day - _startDay);
-        if (_content.childCount == 0 || daysLeft <= 0)
+        if (_content.childCount == 0 || Time.time >= _timestamp )
         {
-            if (daysLeft <= 0)
+            if (Time.time >= _timestamp)
             {
                 FindObjectOfType<PointsPanel>().Points -= _struct.Phases.Count * 5;
             }
             Destroy(gameObject);
             FindObjectOfType<BuildinSitesPanel>().OnBuildingSiteDelete?.Invoke(_struct);
         }
-        
-        _daysLabel.text = daysLeft + " Days Left.";
+        var dayString = ((int) ((_timestamp - Time.time) / _timeManager.DayDuration)).ToString();
+        if (_daysLabel.text != dayString)
+        {
+            _daysLabel.text = dayString + " Days Left.";
+        }
     }
 
 }

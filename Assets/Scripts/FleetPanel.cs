@@ -19,16 +19,9 @@ public class FleetPanel : MonoBehaviour
     {
         foreach (var fleetStruct in FindObjectOfType<MainManager>().Config.Fleet)
         {
-            var vehiclePanel = Instantiate(VehiclePrefab).GetComponent<VehiclePanel>();
-            vehiclePanel.transform.SetParent(_content, false);
-            vehiclePanel.Count = fleetStruct.Count;
-            vehiclePanel.Type = fleetStruct.Type;
-            
+            var vehiclePanel = Instantiate(VehiclePrefab,_content,false).GetComponent<VehiclePanel>();
+            vehiclePanel.Initalize(fleetStruct.Type,fleetStruct.Count);
             _vehicles[fleetStruct.Type] = vehiclePanel;
-            foreach (var button in vehiclePanel.GetComponentsInChildren<Button>())
-            {
-                button.gameObject.SetActive(false);
-            }
         }
     }
 

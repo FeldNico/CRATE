@@ -36,9 +36,8 @@ public class BuildingSitePhasePanel : MonoBehaviour
         _nameLabel.text = Enum.GetName(typeof(Config.Config.PhaseType), _type);
         foreach (var vehicleStruct in buildingPhaseStruct.Vehicles)
         {
-            var vehicle = Instantiate(VehiclePrefab).GetComponent<VehiclePanel>();
-            vehicle.transform.SetParent(_content, false);
-            vehicle.Initalize(vehicleStruct);
+            var vehicle = Instantiate(VehiclePrefab,_content,false).GetComponent<VehiclePanel>();
+            vehicle.Initalize(vehicleStruct.Type,vehicleStruct.Count);
             _vehiclePanels.Add(vehicle);
         }
         
@@ -55,16 +54,17 @@ public class BuildingSitePhasePanel : MonoBehaviour
             panel.DisableButtons();
         }
         
-        var startDay = _timeManager.Day;
+        var startDay = Time.time;
         _progressBar.value = 0f;
 
         StartCoroutine(Animate());
         IEnumerator Animate()
         {
-            while (_timeManager.Day < startDay + 3)
+            var duration = _timeManager.GetTimeStampInDays(3) - Time.time;
+            while (Time.time < startDay + duration)
             {
                 yield return null;
-                _progressBar.value = (_timeManager.Day - startDay)/3f;
+                _progressBar.value = (Time.time - startDay)/duration;
             }
             _progressBar.value = 1;
             _startButton.interactable = true;

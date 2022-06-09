@@ -8,7 +8,8 @@ using Random = UnityEngine.Random;
 public class AssignmentsPanel : MonoBehaviour
 {
     [SerializeField] private GameObject _assignementPrefab;
-    [SerializeField] private RectTransform _content;
+    [SerializeField] private RectTransform _content1;
+    [SerializeField] private RectTransform _content2;
 
     private List<RectTransform> assignements;
 
@@ -16,22 +17,17 @@ public class AssignmentsPanel : MonoBehaviour
     void Start()
     {
         var conf = FindObjectOfType<MainManager>().Config.Conf;
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 3; i++)
         {
             var buildingSiteStruct = conf[Random.Range(0, conf.Count)];
-            var assignment = Instantiate(_assignementPrefab, _content, false);
-            assignment.transform.Find("Label").GetComponent<TMP_Text>().text =
-                Enum.GetName(typeof(Config.Config.BuildingSiteCategory), buildingSiteStruct.Category);
-            var dayslabel = assignment.transform.Find("DaysLabel").GetComponent<TMP_Text>();
-            dayslabel.text = (buildingSiteStruct.Phases.Count * 5f) + " Days Needed";
-            assignment.GetComponentInChildren<Button>().onClick.AddListener(() =>
-            {
-                var bsp = FindObjectOfType<BuildinSitesPanel>();
-                var vehiclePanel = Instantiate(bsp.ConstructionPrefab).GetComponent<BuildingSite>();
-                vehiclePanel.transform.SetParent(bsp.Content, false);
-                vehiclePanel.Instantiate(buildingSiteStruct);
-                Destroy(assignment.gameObject);
-            });
+            var assignment = Instantiate(_assignementPrefab, _content1, false).GetComponent<AssignmentPanel>();
+            assignment.Initialize(buildingSiteStruct);
+        }
+        for (int i = 0; i < 3; i++)
+        {
+            var buildingSiteStruct = conf[Random.Range(0, conf.Count)];
+            var assignment = Instantiate(_assignementPrefab, _content2, false).GetComponent<AssignmentPanel>();
+            assignment.Initialize(buildingSiteStruct);
         }
     }
 }
