@@ -8,40 +8,28 @@ namespace Config
     public class Config :ScriptableObject
     {
         public enum VEHICLE_TYPE{
-            Supervisor,
-            Roller,
-            Excavator,
-            Truck,
-            DemolitionCrane,
+            Carousel,
+            FoodStand,
+            FerrisWheel,
+            BouncyCastle,
+            LooseBooth,
+            BumperCar
         }
-        
-        public enum PhaseType
+
+        public enum EVENT_CATEGORY
         {
-            Planning,
-            Construction,
-            Cleanup,
-            Roadwork,
-            Demolition
-        }
-        
-        public enum BuildingSiteCategory
-        {
-            Construction,
-            Roadwork,
-            Demolition
+            OpenDoorDay,
+            Funfair,
+            Party,
+            ChristmasMarket
         }
         
         [Serializable]
-        public struct BuildingSiteStruct
+        public struct EventStruct
         {
-            public BuildingSiteCategory Category;
-            public List<BuildingPhaseStruct> Phases;
-        }
-        
-        [Serializable]
-        public struct BuildingPhaseStruct
-        {
-            public PhaseType Type;
+            public EVENT_CATEGORY Category;
+            public int DurationInDays;
+            [NonReorderable]
             public List<VehicleStruct> Vehicles;
         }
 
@@ -59,9 +47,10 @@ namespace Config
             public int Count;
         }
         
-        public List<BuildingSiteStruct> Conf =
-            new List<BuildingSiteStruct>();
+        [NonReorderable]
+        public List<EventStruct> Conf = new();
 
-        public List<FleetStruct> Fleet = new List<FleetStruct>();
+        [NonReorderable]
+        public List<FleetStruct> Fleet = new();
     }
 }

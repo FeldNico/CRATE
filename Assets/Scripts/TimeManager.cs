@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TimeManager : MonoBehaviour
 {
@@ -17,9 +18,12 @@ public class TimeManager : MonoBehaviour
     [SerializeField]
     private TMP_Text _dayLabel;
 
+    [SerializeField] private Slider _progress;
+
     private void Update()
     {
         Day = (int) (Time.time / DayDuration) + (Time.time % DayDuration) / DayDuration;
+        _progress.value = (Time.time % DayDuration) / DayDuration;
         var dayString = ((int) Day).ToString();
         if (_dayLabel != null && _dayLabel.text != dayString)
         {
@@ -31,5 +35,10 @@ public class TimeManager : MonoBehaviour
     {
         var dayms = (int) (Time.time / DayDuration) + Time.time % DayDuration;
         return Time.time - (dayms - Day) + days * DayDuration;
+    }
+
+    public float GetTimeUntilNextDay()
+    {
+        return DayDuration - (Time.time % DayDuration);
     }
 }

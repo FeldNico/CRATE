@@ -13,18 +13,20 @@ public class AssignmentsPanel : MonoBehaviour
     [SerializeField] private RectTransform _content2;
 
     private List<RectTransform> assignements;
+    private TimeManager _timeManager;
 
     // Start is called before the first frame update
     void Start()
     {
+        _timeManager = FindObjectOfType<TimeManager>();
         var conf = FindObjectOfType<MainManager>().Config.Conf;
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 2; i++)
         {
             var buildingSiteStruct = conf[Random.Range(0, conf.Count)];
             var assignment = Instantiate(_assignementPrefab, _content1, false).GetComponent<AssignmentPanel>();
             assignment.Initialize(buildingSiteStruct);
         }
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 2; i++)
         {
             var buildingSiteStruct = conf[Random.Range(0, conf.Count)];
             var assignment = Instantiate(_assignementPrefab, _content2, false).GetComponent<AssignmentPanel>();
@@ -39,18 +41,12 @@ public class AssignmentsPanel : MonoBehaviour
             var buildingSiteStruct = conf[Random.Range(0, conf.Count)];
             var assignment = Instantiate(_assignementPrefab, _content1, false).GetComponent<AssignmentPanel>();
             assignment.Initialize(buildingSiteStruct);
-            foreach (var child in assignment.GetComponentsInChildren<Renderer>(true))
-            {
-                child.enabled = false;
-            }
+            assignment.gameObject.SetActive(false);
             StartCoroutine(WaitForContext1());
             IEnumerator WaitForContext1()
             {
-                yield return new WaitForSeconds(2f);
-                foreach (var child in assignment.GetComponentsInChildren<Renderer>(true))
-                {
-                    child.enabled = true;
-                }
+                yield return new WaitForSeconds(_timeManager.GetTimeUntilNextDay() + _timeManager.DayDuration);
+                assignment.gameObject.SetActive(true);
             }
         }
         if (_content2.transform.childCount < 3)
@@ -59,18 +55,12 @@ public class AssignmentsPanel : MonoBehaviour
             var buildingSiteStruct = conf[Random.Range(0, conf.Count)];
             var assignment = Instantiate(_assignementPrefab, _content2, false).GetComponent<AssignmentPanel>();
             assignment.Initialize(buildingSiteStruct);
-            foreach (var child in assignment.GetComponentsInChildren<Renderer>(true))
+            assignment.gameObject.SetActive(false);
+            StartCoroutine(WaitForContext2());
+            IEnumerator WaitForContext2()
             {
-                child.enabled = false;
-            }
-            StartCoroutine(WaitForContext1());
-            IEnumerator WaitForContext1()
-            {
-                yield return new WaitForSeconds(2f);
-                foreach (var child in assignment.GetComponentsInChildren<Renderer>(true))
-                {
-                    child.enabled = true;
-                }
+                yield return new WaitForSeconds(_timeManager.GetTimeUntilNextDay() + _timeManager.DayDuration);
+                assignment.gameObject.SetActive(true);
             }
         }
     }

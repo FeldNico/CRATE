@@ -21,7 +21,7 @@ namespace Config
         public struct LanguageEntry
         {
             [SerializeField] internal string key;
-            [SerializeField]
+            [SerializeField, NonReorderable]
             internal List<TranslationEntry> translations;
         }
 
@@ -36,7 +36,7 @@ namespace Config
         
         public Language CurrentLanguage = Language.EN;
         
-        [SerializeField]
+        [SerializeField,NonReorderable]
         private List<LanguageEntry> entries;
 
         public string Translate(string key, Language language)

@@ -52,7 +52,8 @@ public class VehiclePanel: MonoBehaviour
             {
                 _countLabel.text = _count.ToString();
             }
-            if (GetComponentInParent<BuildingSitePhasePanel>() != null)
+            
+            if (GetComponentInParent<EventPanel>() != null)
             {
                 _countLabel.text = _count+"/"+_maxCount;
             }
@@ -66,10 +67,12 @@ public class VehiclePanel: MonoBehaviour
         set
         {
             _maxCount = Math.Clamp(value,0,Int32.MaxValue);
-            if (GetComponentInParent<BuildingSitePhasePanel>() != null )
+            
+            if (GetComponentInParent<EventPanel>() != null )
             {
                 _countLabel.text = _count.ToString()+"/"+_maxCount;
             }
+            
         }
     }
 
@@ -134,7 +137,7 @@ public class VehiclePanel: MonoBehaviour
     public void Initalize(Config.Config.VEHICLE_TYPE type, int count)
     {
         Type = type;
-        if (GetComponentInParent<BuildinSitesPanel>())
+        if (GetComponentInParent<AssignedEventsPanel>())
         {
             MaxCount = count;
         }

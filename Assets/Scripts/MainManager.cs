@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -5,17 +6,17 @@ public class MainManager : MonoBehaviour
 {
     public UnityAction OnExperimentStart;
     
-    public Config.Config Config => _config;
-
-    [SerializeField]
-    private Config.Config _config;
+    [field: SerializeField]
+    public Config.Config Config { get; private set; }
+    
 
     private void Awake()
     {
-        if (_config == null)
+        if (Config == null)
         {
-            _config = Resources.Load<Config.Config>("Config/Config");
+            Config = Resources.Load<Config.Config>("Config/Config");
         }
+        Config.Fleet =Config.Fleet.OrderBy(s => s.Type).ToList();
     }
 
     public void OnExperimentStartMessage()
