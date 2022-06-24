@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -28,6 +29,49 @@ public class AssignmentsPanel : MonoBehaviour
             var buildingSiteStruct = conf[Random.Range(0, conf.Count)];
             var assignment = Instantiate(_assignementPrefab, _content2, false).GetComponent<AssignmentPanel>();
             assignment.Initialize(buildingSiteStruct);
+        }
+    }
+    
+    private void Update(){
+        if (_content1.transform.childCount < 3)
+        {
+            var conf = FindObjectOfType<MainManager>().Config.Conf;
+            var buildingSiteStruct = conf[Random.Range(0, conf.Count)];
+            var assignment = Instantiate(_assignementPrefab, _content1, false).GetComponent<AssignmentPanel>();
+            assignment.Initialize(buildingSiteStruct);
+            foreach (var child in assignment.GetComponentsInChildren<Renderer>(true))
+            {
+                child.enabled = false;
+            }
+            StartCoroutine(WaitForContext1());
+            IEnumerator WaitForContext1()
+            {
+                yield return new WaitForSeconds(2f);
+                foreach (var child in assignment.GetComponentsInChildren<Renderer>(true))
+                {
+                    child.enabled = true;
+                }
+            }
+        }
+        if (_content2.transform.childCount < 3)
+        {
+            var conf = FindObjectOfType<MainManager>().Config.Conf;
+            var buildingSiteStruct = conf[Random.Range(0, conf.Count)];
+            var assignment = Instantiate(_assignementPrefab, _content2, false).GetComponent<AssignmentPanel>();
+            assignment.Initialize(buildingSiteStruct);
+            foreach (var child in assignment.GetComponentsInChildren<Renderer>(true))
+            {
+                child.enabled = false;
+            }
+            StartCoroutine(WaitForContext1());
+            IEnumerator WaitForContext1()
+            {
+                yield return new WaitForSeconds(2f);
+                foreach (var child in assignment.GetComponentsInChildren<Renderer>(true))
+                {
+                    child.enabled = true;
+                }
+            }
         }
     }
 }
