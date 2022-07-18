@@ -14,6 +14,8 @@ public class EventPanel : MonoBehaviour
 
     [SerializeField] private TMP_Text _nameLabel;
 
+    [SerializeField] private Button _deleteButton;
+
     [SerializeField] private Slider _progressBar;
 
     [SerializeField] private TMP_Text _deadlineLabel;
@@ -54,6 +56,11 @@ public class EventPanel : MonoBehaviour
         }
         
         _startButton.onClick.AddListener(PerformPhase);
+        _deleteButton.onClick.AddListener(() =>
+        {
+            FindObjectOfType<PointsPanel>().Points -= _eventStruct.DurationInDays * 5;
+            Destroy(gameObject);
+        });
     }
 
     private void PerformPhase()
