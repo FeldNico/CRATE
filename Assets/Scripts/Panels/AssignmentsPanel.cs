@@ -14,27 +14,41 @@ public class AssignmentsPanel : MonoBehaviour
 
     private List<RectTransform> assignements;
     private TimeManager _timeManager;
+    private MainManager _mainManager;
+    private bool _doUpdate = false;
 
     // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         _timeManager = FindObjectOfType<TimeManager>();
-        var conf = FindObjectOfType<MainManager>().Config.Conf;
-        for (int i = 0; i < 2; i++)
+        _mainManager = FindObjectOfType<MainManager>();
+        _mainManager.OnExperimentStart += () =>
         {
-            var buildingSiteStruct = conf[Random.Range(0, conf.Count)];
-            var assignment = Instantiate(_assignementPrefab, _content1, false).GetComponent<AssignmentPanel>();
-            assignment.Initialize(buildingSiteStruct);
-        }
-        for (int i = 0; i < 2; i++)
-        {
-            var buildingSiteStruct = conf[Random.Range(0, conf.Count)];
-            var assignment = Instantiate(_assignementPrefab, _content2, false).GetComponent<AssignmentPanel>();
-            assignment.Initialize(buildingSiteStruct);
-        }
+            var conf = _mainManager.Config.Conf;
+            for (int i = 0; i < 2; i++)
+            {
+                var buildingSiteStruct = conf[Random.Range(0, conf.Count)];
+                var assignment = Instantiate(_assignementPrefab, _content1, false).GetComponent<AssignmentPanel>();
+                assignment.Initialize(buildingSiteStruct);
+            }
+
+            for (int i = 0; i < 2; i++)
+            {
+                var buildingSiteStruct = conf[Random.Range(0, conf.Count)];
+                var assignment = Instantiate(_assignementPrefab, _content2, false).GetComponent<AssignmentPanel>();
+                assignment.Initialize(buildingSiteStruct);
+            }
+
+            _doUpdate = true;
+        };
     }
     
     private void Update(){
+        if (!_doUpdate)
+        {
+            return;
+        }
+        
         if (_content1.transform.childCount < 3)
         {
             var conf = FindObjectOfType<MainManager>().Config.Conf;

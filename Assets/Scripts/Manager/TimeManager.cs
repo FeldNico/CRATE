@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,8 +21,23 @@ public class TimeManager : MonoBehaviour
 
     [SerializeField] private Slider _progress;
 
+    private bool _doUpdate = false;
+    
+    private void Awake()
+    {
+        FindObjectOfType<MainManager>().OnExperimentStart += () =>
+        {
+            _doUpdate = true;
+        };
+    }
+
     private void Update()
     {
+        if (!_doUpdate)
+        {
+            return;
+        }
+        
         Day = (int) (Time.time / DayDuration) + (Time.time % DayDuration) / DayDuration;
         _progress.value = (Time.time % DayDuration) / DayDuration;
         var dayString = ((int) Day).ToString();

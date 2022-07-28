@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-us">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -8,23 +8,26 @@
     <meta name="description" content="{{{ DESCRIPTION }}}">
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-  </head>
-  <body>
-    <div id="unity-container">
-      <div id="unity-canvas-container" style="width: 100%; height: 100%;">
+</head>
+<body>
+<div id="unity-container">
+    <div id="unity-canvas-container" style="width: 100%; height: 100%;">
         <canvas id="unity-canvas" style="width: 100%; height: 100%;"></canvas>
-      </div>
-      <div>
+    </div>
+    <div id="panel">
+
+        <label id="unity-fullscreen-label" for="unity-fullscreen-input">Codewort:</label>
+        <input type="text" id="unity-fullscreen-input" name="sid"><br><br>
         <button id="unity-fullscreen-button" value="Fullscreen">Start Experiment</button>
-      </div>
-      <div id="unity-loading-bar">
+    </div>
+    <div id="unity-loading-bar">
         <div id="unity-logo"></div>
         <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
+            <div id="unity-progress-bar-full"></div>
         </div>
-      </div>
     </div>
-    <script>
+</div>
+<script>
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
       var config = {
@@ -49,6 +52,7 @@
       var loadingBar = document.querySelector("#unity-loading-bar");
       var progressBarFull = document.querySelector("#unity-progress-bar-full");
       var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+      var sidInput = document.querySelector("#unity-fullscreen-input");
       var unityInstance = null;
       {{{ WEBXR_POLYFILL_CONFIG }}}
 
@@ -60,23 +64,33 @@
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
+       if (fullscreenButton && sidInput)
+          {
+          fullscreenButton.disabled = true;
+            sidInput.oninput = () => {
+              fullscreenButton.disabled = !(/^[1-9]{6}$/.test(sidInput.value));
+            }
+            fullscreenButton.onclick = () => {
+            createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
         }).then((instance) => {
           unityInstance = instance;
           loadingBar.style.display = "none";
-          if (fullscreenButton)
-          {
-            fullscreenButton.onclick = () => {
-              unityInstance.SetFullscreen(1);
-              unityInstance.SendMessage("MainManager","OnExperimentStartMessage")
-            };
-          }
+          unityInstance.SetFullscreen(1);
+          setTimeout(() => {
+            unityInstance.SendMessage("MainManager","OnExperimentStartMessage",sidInput.value);
+          }, 3000);
+           
         }).catch((message) => {
           alert(message);
         });
+              
+            };
+          }
+        
       };
       document.body.appendChild(script);
-    </script>
-  </body>
+    
+</script>
+</body>
 </html>

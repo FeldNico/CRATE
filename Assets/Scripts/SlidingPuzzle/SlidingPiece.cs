@@ -40,7 +40,7 @@ public class SlidingPiece : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (!Empty)
+        if (!Empty && _puzzle.IsInteractable)
         {
             _puzzle.SwapPiece(this);
         }

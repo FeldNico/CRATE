@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class EventPanel : MonoBehaviour
 {
@@ -34,11 +35,13 @@ public class EventPanel : MonoBehaviour
     private int _startDay;
     private bool _isProgressing;
     private TimeManager _timeManager;
-    
+    private SlidingPuzzle _puzzle;
+    private GameObject _hover;
 
     public void Initialize(Config.Config.EventStruct eventStruct, int deadline)
     {
         _timeManager = FindObjectOfType<TimeManager>();
+        _puzzle = FindObjectOfType<SlidingPuzzle>();
         _eventStruct = eventStruct;
         _deadline = deadline;
         Category = eventStruct.Category;
@@ -77,7 +80,7 @@ public class EventPanel : MonoBehaviour
         IEnumerator Animation()
         {
             var startDay = Time.time;
-            _startButton.GetComponentInChildren<TMP_Text>().text = "Geschäfte versendet";
+            _startButton.GetComponentInChildren<TMP_Text>().text = "Event startet am nächsten Tag.";
             var duration = _timeManager.GetTimeUntilNextDay();
             _progressBar.value = 0f;
             while (Time.time < startDay + duration)
@@ -93,14 +96,55 @@ public class EventPanel : MonoBehaviour
             while (Time.time < startDay + duration)
             {
                 yield return null;
+                if (_puzzle.Booster && duration > _timeManager.DayDuration)
+                {
+                    duration -= _timeManager.DayDuration;
+                    ShowHover(-1);
+                }
                 _durationLabel.text = "Noch " + ((int) (((duration+startDay) -Time.time) / _timeManager.DayDuration) +1) + " Tag(e)";
                 _progressBar.value = (Time.time - startDay)/duration;
             }
             _progressBar.value = 1;
             _startButton.interactable = true;
-            _isProgressing = false;
             FindObjectOfType<PointsPanel>().Points += _eventStruct.DurationInDays * 5;
             Destroy(gameObject);
+        }
+    }
+    
+    private void ShowHover(int days)
+    {
+        if (_hover != null)
+        {
+            Destroy(_hover);
+        }
+        var canvas = FindObjectOfType<Canvas>();
+        var go = new GameObject().AddComponent<TextMeshProUGUI>();
+        _hover = go.gameObject;
+        go.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+        var rect = go.transform as RectTransform;
+        rect.sizeDelta = new Vector2(100, 100);
+        go.fontSize = 20;
+        go.alignment = TextAlignmentOptions.Center;
+        go.transform.SetParent(canvas.transform,false);
+        go.transform.position = _durationLabel.transform.position + Vector3.up *20f;
+        if (days > 0)
+        {
+            go.text = "+"+days;
+            go.faceColor = Color.red;
+        }
+        else
+        {
+            go.text = days.ToString();
+            go.faceColor = Color.green;
+        }
+
+        go.text += " Tag(e)";
+
+        StartCoroutine(WaitDestroy());
+        IEnumerator WaitDestroy()
+        {
+            yield return new WaitForSeconds(1f);
+            Destroy(_hover);
         }
     }
 
@@ -119,6 +163,13 @@ public class EventPanel : MonoBehaviour
             return;
         }
 
+        if (_eventStruct.DurationInDays > 1 && _puzzle.Booster && _hover == null)
+        {
+            _eventStruct.DurationInDays -= 1;
+            _durationLabel.text = _eventStruct.DurationInDays+" Tage";
+            ShowHover(-1);
+        }
+        
         _startButton.interactable = _vehiclePanels.All(panel => panel.Count == panel.MaxCount);
         if (_startButton.interactable)
         {
@@ -132,6 +183,7 @@ public class EventPanel : MonoBehaviour
 
     private void OnDestroy()
     {
+        _isProgressing = false;
         var fleetPanel = FindObjectOfType<FleetPanel>();
         if (fleetPanel != null)
         {
@@ -142,6 +194,11 @@ public class EventPanel : MonoBehaviour
                     fleetPanel.AddVehicle(panel.Type);
                 }
             }
+        }
+
+        if (_hover != null)
+        {
+            Destroy(_hover);
         }
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -9,6 +10,8 @@ using Random = UnityEngine.Random;
 public class SlidingPuzzle : MonoBehaviour
 {
 
+    public bool IsInteractable { private set; get; } = true;
+    public bool Booster { private set; get; } = false;
     [field: SerializeField] public Vector2Int Size { private set; get; }
     [SerializeField] private GameObject _piecePrefab;
     [SerializeField] private GridLayoutGroup _content;
@@ -16,19 +19,22 @@ public class SlidingPuzzle : MonoBehaviour
     private Texture _currentTexture;
 
     private SlidingPiece[,] _pieces;
-    private void Start()
+
+    private void Awake()
     {
-        var sizeDelta = (_content.transform as RectTransform).sizeDelta;
-        var min = Mathf.Min(sizeDelta.x, sizeDelta.y) - 5*Mathf.Max(Size.x,Size.y);
-        _content.cellSize = new Vector2(min / Size.x,
-            min / Size.y);
-        _content.spacing = 5 * Vector2.one;
+        FindObjectOfType<MainManager>().OnExperimentStart += () =>
+        {
+            var sizeDelta = (_content.transform as RectTransform).sizeDelta;
+            var min = Mathf.Min(sizeDelta.x, sizeDelta.y) - 5*Mathf.Max(Size.x,Size.y);
+            _content.cellSize = new Vector2(min / Size.x,
+                min / Size.y);
+            _content.spacing = 5 * Vector2.one;
 
-        _pieces = new SlidingPiece[Size.x, Size.y];
+            _pieces = new SlidingPiece[Size.x, Size.y];
 
-        _textures = Resources.LoadAll<Texture>("Images").ToList();
-        
-        Initalize(_textures[Random.Range(0,_textures.Count)]);
+            _textures = Resources.LoadAll<Texture>("Images").ToList();
+            Initalize(_textures[Random.Range(0, _textures.Count)]);
+        };
     }
 
     public void Initalize(Texture texture)
@@ -51,7 +57,7 @@ public class SlidingPuzzle : MonoBehaviour
 
         var oldPieces = new SlidingPiece[Math.Max(Size.x,Size.y)*2];
         var currentIndex = 0;
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 20; i++)
         {
             var piece = _pieces[Random.Range(0, Size.x), Random.Range(0, Size.y)];
             while (GetEmptyNeighbour(piece) == null && !oldPieces.ToList().Contains(piece))
@@ -72,6 +78,8 @@ public class SlidingPuzzle : MonoBehaviour
             return;
         }
 
+        IsInteractable = false;
+        
         var indexA = piece.transform.GetSiblingIndex();
         var indexB = empty.transform.GetSiblingIndex();
         var posA = piece.Position;
@@ -96,15 +104,28 @@ public class SlidingPuzzle : MonoBehaviour
 
         if (finished)
         {
-            FindObjectOfType<PointsPanel>().Points += 10;
+            //FindObjectOfType<PointsPanel>().Points += 10;
 
             var newTexture = _textures[Random.Range(0, _textures.Count)];
             while (newTexture == _currentTexture)
             {
                 newTexture = _textures[Random.Range(0, _textures.Count)];
             }
-            
-            Initalize(newTexture);
+
+            StartCoroutine(Wait());
+            IEnumerator Wait()
+            {
+                Booster = true;
+                yield return null;
+                Booster = false;
+                yield return new WaitForSeconds(1);
+                Initalize(newTexture);
+                IsInteractable = true;
+            }
+        }
+        else
+        {
+            IsInteractable = true;
         }
     }
 

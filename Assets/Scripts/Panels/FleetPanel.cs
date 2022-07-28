@@ -15,14 +15,17 @@ public class FleetPanel : MonoBehaviour
 
     private Dictionary<Config.Config.VEHICLE_TYPE, VehiclePanel> _vehicles = new();
 
-    private void Start()
+    private void Awake()
     {
-        foreach (var fleetStruct in FindObjectOfType<MainManager>().Config.Fleet)
+        FindObjectOfType<MainManager>().OnExperimentStart += () =>
         {
-            var vehiclePanel = Instantiate(VehiclePrefab,_content,false).GetComponent<VehiclePanel>();
-            vehiclePanel.Initalize(fleetStruct.Type,fleetStruct.Count);
-            _vehicles[fleetStruct.Type] = vehiclePanel;
-        }
+            foreach (var fleetStruct in FindObjectOfType<MainManager>().Config.Fleet)
+            {
+                var vehiclePanel = Instantiate(VehiclePrefab, _content, false).GetComponent<VehiclePanel>();
+                vehiclePanel.Initalize(fleetStruct.Type, fleetStruct.Count);
+                _vehicles[fleetStruct.Type] = vehiclePanel;
+            }
+        };
     }
 
     public bool RemoveVehicle(Config.Config.VEHICLE_TYPE type)
