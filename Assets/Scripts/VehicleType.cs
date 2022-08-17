@@ -1,12 +1,19 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class VehicleType : MonoBehaviour
+[Serializable]
+public class VehicleType
 {
-    [field: SerializeField]
-    public int Name { private set; get; }
+    [field: SerializeField] public string VehicleName { private set; get; } = "No Name";
     
-    [field: SerializeField]
-    public int Value { private set; get; }
+    [field: SerializeField,Min(1)] public int Value { private set; get; } = 1;
+
+    public VehicleType(string name, int value)
+    {
+        VehicleName = name;
+        Value = value;
+    }
 }

@@ -18,6 +18,7 @@ public class AssignmentsPanel : MonoBehaviour
     private bool _doUpdate = false;
 
     // Start is called before the first frame update
+    /*
     private void Awake()
     {
         _timeManager = FindObjectOfType<TimeManager>();
@@ -78,4 +79,5 @@ public class AssignmentsPanel : MonoBehaviour
             }
         }
     }
+    */
 }

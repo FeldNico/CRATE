@@ -7,6 +7,7 @@ public class MainManager : MonoBehaviour
 {
     public UnityAction OnExperimentStart;
     
+    /*
     [field: SerializeField]
     public Config.Config Config { get; private set; }
 
@@ -21,7 +22,7 @@ public class MainManager : MonoBehaviour
         }
         Config.Fleet =Config.Fleet.OrderBy(s => s.Type).ToList();
     }
-
+*/
     private void Start()
     {
         #if UNITY_EDITOR

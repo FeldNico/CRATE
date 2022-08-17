@@ -9,7 +9,7 @@ using Random = UnityEngine.Random;
 
 public class EventPanel : MonoBehaviour
 {
-    [field: SerializeField] public Config.Config.EVENT_CATEGORY Category { get; private set; }
+    //[field: SerializeField] public Config.Config.EVENT_CATEGORY Category { get; private set; }
     
     [SerializeField] private GameObject VehiclePrefab;
 
@@ -30,7 +30,7 @@ public class EventPanel : MonoBehaviour
     [SerializeField] private RectTransform _content;
     
     private List<VehiclePanel> _vehiclePanels = new();
-    private Config.Config.EventStruct _eventStruct;
+    //private Config.Config.EventStruct _eventStruct;
     private int _deadline;
     private int _startDay;
     private bool _isProgressing;
@@ -38,6 +38,7 @@ public class EventPanel : MonoBehaviour
     private SlidingPuzzle _puzzle;
     private GameObject _hover;
 
+    /*
     public void Initialize(Config.Config.EventStruct eventStruct, int deadline)
     {
         _timeManager = FindObjectOfType<TimeManager>();
@@ -201,4 +202,5 @@ public class EventPanel : MonoBehaviour
             Destroy(_hover);
         }
     }
+    */
 }

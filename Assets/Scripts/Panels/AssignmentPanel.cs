@@ -13,6 +13,7 @@ public class AssignmentPanel : MonoBehaviour
     [SerializeField] private RectTransform _content;
     [SerializeField] private Button _button;
 
+    /*
     private Config.Config.EventStruct _info;
     private int _startDay = 0;
 
@@ -53,4 +54,5 @@ public class AssignmentPanel : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    */
 }

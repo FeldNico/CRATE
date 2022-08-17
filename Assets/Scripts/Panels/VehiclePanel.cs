@@ -8,7 +8,7 @@ public class VehiclePanel: MonoBehaviour
 {
 
     public bool AreButtonsEnabled = true;
-
+/*
     public Config.Config.VEHICLE_TYPE Type
     {
         set
@@ -148,4 +148,5 @@ public class VehiclePanel: MonoBehaviour
             _removeButton.gameObject.SetActive(false);
         }
     }
+    */
 }

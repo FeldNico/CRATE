@@ -7,46 +7,25 @@ using UnityEngine.UI;
 public class FleetPanel : MonoBehaviour
 {
 
-    [SerializeField]
-    private GameObject VehiclePrefab;
-    
-    [SerializeField]
-    private RectTransform _content;
+    [SerializeField] private GameObject VehiclePanelPrefab;
 
-    private Dictionary<Config.Config.VEHICLE_TYPE, VehiclePanel> _vehicles = new();
+    [SerializeField] private RectTransform _content;
+
+    private List<Vehicle> _vehicles = new List<Vehicle>();
 
     private void Awake()
     {
         FindObjectOfType<MainManager>().OnExperimentStart += () =>
         {
-            foreach (var fleetStruct in FindObjectOfType<MainManager>().Config.Fleet)
+            var fleet = CrateConfig.Instance.GetFleet();
+            foreach (var type in fleet.Keys)
             {
-                var vehiclePanel = Instantiate(VehiclePrefab, _content, false).GetComponent<VehiclePanel>();
-                vehiclePanel.Initalize(fleetStruct.Type, fleetStruct.Count);
-                _vehicles[fleetStruct.Type] = vehiclePanel;
+                for (int i = 0; i < fleet[type]; i++)
+                {
+                    _vehicles.Add(new Vehicle(type, false));
+                }
             }
         };
     }
-
-    public bool RemoveVehicle(Config.Config.VEHICLE_TYPE type)
-    {
-        var count = GetVehicleCount(type);
-        if (count == 0)
-        {
-            return false;
-        }
-
-        _vehicles[type].Count--;
-        return true;
-    }
-
-    public void AddVehicle(Config.Config.VEHICLE_TYPE type)
-    {
-        _vehicles[type].Count++;
-    }
-
-    public int GetVehicleCount(Config.Config.VEHICLE_TYPE type)
-    {
-        return _vehicles[type].Count;
-    }
 }
+
