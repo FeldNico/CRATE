@@ -31,16 +31,32 @@ public class CrateConfig :ScriptableObject
     
     [SerializeField,Min(1)]
     private int _minVehicleCount= 2;
-
     public int MinVehicleCount => _minVehicleCount;
     
     [SerializeField,Min(1)]
-    private int _maxVehicleCountPerTypePerDay= 2;
+    private int _minTypeCount= 2;
+    public int MinTypeCount => _minTypeCount;
+    
+    [SerializeField,Min(1)]
+    private int _maxVehiclesPerTypePerDay= 2;
+    public int MaxVehiclesPerTypePerDay => _maxVehiclesPerTypePerDay;
 
-    public int MaxVehicleCountPerTypePerDay => _maxVehicleCountPerTypePerDay;
+    [SerializeField,NonReorderable] private List<string> _prefixes = new List<string>();
+    public List<string> Prefixes => _prefixes;
+    
+    [SerializeField,NonReorderable] private List<string> _suffixes = new List<string>();
+    public List<string> Suffixes => _suffixes;
+
+    [SerializeField]
+    public List<AssignmentType> AssignmentTypes = new List<AssignmentType>();
     
     public Dictionary<VehicleType,int> GetFleet()
     {
+        var dict = new Dictionary<VehicleType, int>();
+        if (VehicleTypes.Count == 0)
+        {
+            return dict;
+        }
         var lcm = calculateLCM(VehicleTypes.Select(vehicleType => vehicleType.Value).ToArray());
         var maxValue = VehicleTypes.Max(type => type.Value);
         var maxCount = lcm / maxValue;
@@ -49,7 +65,7 @@ public class CrateConfig :ScriptableObject
             lcm += lcm;
             maxCount = lcm / maxValue;
         }
-        var dict = new Dictionary<VehicleType, int>();
+        
         foreach (var type in VehicleTypes)
         {
             dict[type] = lcm / type.Value;
@@ -75,4 +91,6 @@ public class CrateConfig :ScriptableObject
 
         return ans;
     }
+    
+    
 }
