@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using TreeEditor;
-using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 [Serializable]
 public class AssignmentType
 {
+    [Serializable]
+    private struct VehicleTypePair
+    {
+        public VehicleType Type;
+        public int Count;
+    }
+    
     [SerializeField] private string _name;
     public string Name => _name;
 
@@ -19,8 +24,36 @@ public class AssignmentType
     public int Days => _days;
 
     [SerializeField]
-    private Dictionary<VehicleType, int> _vehiclesPerDay = null;
-    public Dictionary<VehicleType, int> VehiclesPerDay => _vehiclesPerDay;
+    private List<VehicleTypePair> _vehiclesPerDay = null;
+    public Dictionary<VehicleType, int> VehiclesPerDay {
+        get
+        {
+            var dict = new Dictionary<VehicleType, int>();
+            foreach (var pair in _vehiclesPerDay)
+            {
+                dict[pair.Type] = pair.Count;
+            }
+            
+            return dict;
+        }
+        set
+        {
+            if (_vehiclesPerDay == null)
+            {
+                _vehiclesPerDay = new List<VehicleTypePair>();
+            }
+            _vehiclesPerDay.Clear();
+            foreach (var (type,count) in value.OrderBy(pair => pair.Key.Value))
+            {
+                _vehiclesPerDay.Add(new VehicleTypePair()
+                {
+                    Type = type,
+                    Count = count
+                });
+            }
+            
+        }
+    }
 
     private static bool GetVehiclesRecursive(List<VehicleType> types, int index, int difficultyPerDay, int days,
         Dictionary<VehicleType, int> previousTypes)
@@ -98,7 +131,7 @@ public class AssignmentType
         assigmentType._name = name;
         assigmentType._difficulty = difficulty;
         assigmentType._days = days;
-        assigmentType._vehiclesPerDay = fleet;
+        assigmentType.VehiclesPerDay = fleet;
         return assigmentType;
     }
 }

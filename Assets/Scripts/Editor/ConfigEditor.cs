@@ -31,6 +31,8 @@ namespace Editor
                 }
                 EditorGUILayout.EndHorizontal();
             }
+            serializedObject.ApplyModifiedProperties();
+            serializedObject.Update();
             
             EditorGUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
@@ -46,7 +48,7 @@ namespace Editor
             EditorGUILayout.LabelField("Vehicle Count");
             EditorGUI.indentLevel++;
             var fleet = createConfig.GetFleet();
-            foreach (var type in createConfig.VehicleTypes)
+            foreach (var type in createConfig.VehicleTypes.OrderBy(type => type.Value))
             {
                 EditorGUILayout.BeginHorizontal();
                 GUILayout.FlexibleSpace();

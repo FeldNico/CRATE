@@ -2212,6 +2212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_SendPointerHoverToParent: 1
   m_HorizontalAxis: Horizontal
   m_VerticalAxis: Vertical
   m_SubmitButton: Submit
@@ -2820,7 +2821,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c1549a8dd31eda4488c76858609df43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _assignementPrefab: {fileID: 5069611321749962754, guid: f8f53e6856308b248913f76a93a5f378, type: 3}
+  _assignementPanelPrefab: {fileID: 5069611321749962754, guid: f8f53e6856308b248913f76a93a5f378, type: 3}
   _content1: {fileID: 704623723}
   _content2: {fileID: 1079907352}
 --- !u!1 &2004917346
@@ -3066,7 +3067,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a38013bcd555b054b963eb557d53d84b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Config>k__BackingField: {fileID: 11400000, guid: 4804f7eb3aedcbb4db264db38c1925ec, type: 2}
 --- !u!114 &2032971581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3345,7 +3345,7 @@ GameObject:
   - component: {fileID: 1333193746571277100}
   - component: {fileID: 1333193746571277104}
   m_Layer: 5
-  m_Name: Vehicles
+  m_Name: Fleet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3385,5 +3385,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff328da2a8cbf4042bc57f825fac5cc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  VehiclePrefab: {fileID: 2973262503165842200, guid: 5ab837c549e21e147b29d7b1ec2156a5, type: 3}
+  _vehicleFleetPrefab: {fileID: 2973262503165842200, guid: 614414e281300054abd8c708ac5ed7df, type: 3}
   _content: {fileID: 881040876}

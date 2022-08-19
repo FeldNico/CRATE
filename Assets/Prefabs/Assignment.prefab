@@ -228,9 +228,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdd057b1b10c314a943d12d2a51711a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _vehiclePrefab: {fileID: 2973262503165842200, guid: 5ab837c549e21e147b29d7b1ec2156a5, type: 3}
+  _vehicleAssignmentPanelPrefab: {fileID: 2973262503165842200, guid: 5ab837c549e21e147b29d7b1ec2156a5, type: 3}
   _label: {fileID: 6114362193588265166}
-  _days: {fileID: 6114362193933802631}
+  _daysLabel: {fileID: 6114362193933802631}
   _content: {fileID: 304273350130830309}
   _button: {fileID: 3905827498960359635}
 --- !u!1 &6114362193588265160

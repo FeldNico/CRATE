@@ -4,13 +4,14 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class EventPanel : MonoBehaviour
 {
-    //[field: SerializeField] public Config.Config.EVENT_CATEGORY Category { get; private set; }
-    
+    public static UnityAction<AssignmentType> OnEventClose; 
+
     [SerializeField] private GameObject VehiclePrefab;
 
     [SerializeField] private TMP_Text _nameLabel;
@@ -29,44 +30,41 @@ public class EventPanel : MonoBehaviour
 
     [SerializeField] private RectTransform _content;
     
-    private List<VehiclePanel> _vehiclePanels = new();
-    //private Config.Config.EventStruct _eventStruct;
+    private List<VehicleAssignedEventPanel> _vehiclePanels = new();
+    private AssignmentType _assignmentType;
     private int _deadline;
     private int _startDay;
     private bool _isProgressing;
     private TimeManager _timeManager;
-    private SlidingPuzzle _puzzle;
     private GameObject _hover;
 
-    /*
-    public void Initialize(Config.Config.EventStruct eventStruct, int deadline)
+    
+    public void Initialize(AssignmentType type, int deadline)
     {
         _timeManager = FindObjectOfType<TimeManager>();
-        _puzzle = FindObjectOfType<SlidingPuzzle>();
-        _eventStruct = eventStruct;
+        _assignmentType = type;
         _deadline = deadline;
-        Category = eventStruct.Category;
-        _nameLabel.text = Enum.GetName(typeof(Config.Config.EVENT_CATEGORY), Category);
+        _nameLabel.text = _assignmentType.Name;
         _deadlineLabel.text = _deadline + " Tage";
-        _durationLabel.text = eventStruct.DurationInDays+" Tage";
-        _pointsLabel.text = eventStruct.DurationInDays * 5 + " Punkte";
+        _durationLabel.text = _assignmentType.Days+" Tage";
+        _pointsLabel.text = _assignmentType.Difficulty + " Punkte";
         _startDay = (int) _timeManager.Day;
-        var vehicles = eventStruct.Vehicles;
-        foreach (var vehicleStruct in vehicles.OrderBy(s => s.Type))
+        foreach (var (vehicleType,count) in type.VehiclesPerDay)
         {
-            var vehicle = Instantiate(VehiclePrefab,_content,false).GetComponent<VehiclePanel>();
-            vehicle.Initalize(vehicleStruct.Type,vehicleStruct.Count);
+            var vehicle = Instantiate(VehiclePrefab,_content,false).GetComponent<VehicleAssignedEventPanel>();
+            vehicle.Initialize(vehicleType,count);
             _vehiclePanels.Add(vehicle);
         }
         
         _startButton.onClick.AddListener(PerformPhase);
         _deleteButton.onClick.AddListener(() =>
         {
-            FindObjectOfType<PointsPanel>().Points -= _eventStruct.DurationInDays * 5;
+            FindObjectOfType<PointsPanel>().Points -= _assignmentType.Difficulty / 2;
             Destroy(gameObject);
         });
     }
 
+    
     private void PerformPhase()
     {
         _isProgressing = true;
@@ -74,7 +72,7 @@ public class EventPanel : MonoBehaviour
         _startButton.interactable = false;
         foreach (var panel in _vehiclePanels)
         {
-            panel.DisableButtons();
+            panel.AreButtonsEnabled = false;
         }
 
         StartCoroutine(Animation());
@@ -92,22 +90,17 @@ public class EventPanel : MonoBehaviour
             _progressBar.value = 1;
             _startButton.GetComponentInChildren<TMP_Text>().text = "Event läuft...";
             startDay = Time.time;
-            duration = _timeManager.GetTimeStampInDays(_eventStruct.DurationInDays) - Time.time;
+            duration = _timeManager.GetTimeStampInDays(_assignmentType.Days) - Time.time;
             _progressBar.value = 0f;
             while (Time.time < startDay + duration)
             {
                 yield return null;
-                if (_puzzle.Booster && duration > _timeManager.DayDuration)
-                {
-                    duration -= _timeManager.DayDuration;
-                    ShowHover(-1);
-                }
                 _durationLabel.text = "Noch " + ((int) (((duration+startDay) -Time.time) / _timeManager.DayDuration) +1) + " Tag(e)";
                 _progressBar.value = (Time.time - startDay)/duration;
             }
             _progressBar.value = 1;
             _startButton.interactable = true;
-            FindObjectOfType<PointsPanel>().Points += _eventStruct.DurationInDays * 5;
+            FindObjectOfType<PointsPanel>().Points += _assignmentType.Difficulty;
             Destroy(gameObject);
         }
     }
@@ -159,19 +152,13 @@ public class EventPanel : MonoBehaviour
         _deadlineLabel.text = daysLeft + " Tage";
         if (daysLeft < 0 && _progressBar.value <=0.8f)
         {
-            FindObjectOfType<PointsPanel>().Points -= _eventStruct.DurationInDays * 5;
+            FindObjectOfType<PointsPanel>().Points -= _assignmentType.Difficulty / 3;
             Destroy(gameObject);
             return;
         }
 
-        if (_eventStruct.DurationInDays > 1 && _puzzle.Booster && _hover == null)
-        {
-            _eventStruct.DurationInDays -= 1;
-            _durationLabel.text = _eventStruct.DurationInDays+" Tage";
-            ShowHover(-1);
-        }
-        
-        _startButton.interactable = _vehiclePanels.All(panel => panel.Count == panel.MaxCount);
+        _deleteButton.interactable = _vehiclePanels.All(panel => panel.IsEmpty);
+        _startButton.interactable = _vehiclePanels.All(panel => panel.IsSatisfied);
         if (_startButton.interactable)
         {
             _startButton.GetComponentInChildren<TMP_Text>().text = "Sende Geschäfte";
@@ -184,23 +171,12 @@ public class EventPanel : MonoBehaviour
 
     private void OnDestroy()
     {
+        OnEventClose?.Invoke(_assignmentType);
         _isProgressing = false;
-        var fleetPanel = FindObjectOfType<FleetPanel>();
-        if (fleetPanel != null)
-        {
-            foreach (var panel in _vehiclePanels)
-            {
-                for (int i = 0; i < panel.Count; i++)
-                {
-                    fleetPanel.AddVehicle(panel.Type);
-                }
-            }
-        }
-
         if (_hover != null)
         {
             Destroy(_hover);
         }
     }
-    */
+    
 }

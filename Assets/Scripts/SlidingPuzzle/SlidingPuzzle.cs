@@ -11,12 +11,10 @@ public class SlidingPuzzle : MonoBehaviour
 {
 
     public bool IsInteractable { private set; get; } = true;
-    public bool Booster { private set; get; } = false;
     [field: SerializeField] public Vector2Int Size { private set; get; }
     [SerializeField] private GameObject _piecePrefab;
     [SerializeField] private GridLayoutGroup _content;
-    private List<Texture> _textures;
-    private Texture _currentTexture;
+    private VehicleType _currentType;
 
     private SlidingPiece[,] _pieces;
 
@@ -31,15 +29,14 @@ public class SlidingPuzzle : MonoBehaviour
             _content.spacing = 5 * Vector2.one;
 
             _pieces = new SlidingPiece[Size.x, Size.y];
-
-            _textures = Resources.LoadAll<Texture>("Images").ToList();
-            Initalize(_textures[Random.Range(0, _textures.Count)]);
+            
+            Initalize(CrateConfig.Instance.VehicleTypes[Random.Range(0, CrateConfig.Instance.VehicleTypes.Count)]);
         };
     }
 
-    public void Initalize(Texture texture)
+    public void Initalize(VehicleType type)
     {
-        _currentTexture = texture;
+        _currentType = type;
         foreach (var child in _content.GetComponentsInChildren<SlidingPiece>())
         {
             Destroy(child.gameObject);
@@ -50,7 +47,7 @@ public class SlidingPuzzle : MonoBehaviour
             for (int j = 0; j < Size.y; j++)
             {
                 var piece = Instantiate(_piecePrefab,_content.transform).GetComponent<SlidingPiece>();
-                piece.Initalize(texture,j,i,i == Size.x - 1 && j == Size.y - 1);
+                piece.Initalize(type.VehicleImage.texture,j,i,i == Size.x - 1 && j == Size.y - 1);
                 _pieces[j, i] = piece;
             }
         }
@@ -104,22 +101,18 @@ public class SlidingPuzzle : MonoBehaviour
 
         if (finished)
         {
-            //FindObjectOfType<PointsPanel>().Points += 10;
-
-            var newTexture = _textures[Random.Range(0, _textures.Count)];
-            while (newTexture == _currentTexture)
+            var newType = CrateConfig.Instance.VehicleTypes[Random.Range(0, CrateConfig.Instance.VehicleTypes.Count)];
+            while (newType == _currentType)
             {
-                newTexture = _textures[Random.Range(0, _textures.Count)];
+                newType = CrateConfig.Instance.VehicleTypes[Random.Range(0, CrateConfig.Instance.VehicleTypes.Count)];
             }
 
             StartCoroutine(Wait());
             IEnumerator Wait()
             {
-                Booster = true;
-                yield return null;
-                Booster = false;
+                FindObjectOfType<FleetPanel>().ReturnVehicle(new Vehicle(_currentType,true));
                 yield return new WaitForSeconds(1);
-                Initalize(newTexture);
+                Initalize(newType);
                 IsInteractable = true;
             }
         }

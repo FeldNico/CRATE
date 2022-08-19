@@ -1186,8 +1186,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07a67fbe185e42dea1b90ad7a649bdb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Category>k__BackingField: 0
-  VehiclePrefab: {fileID: 2973262503165842200, guid: 5ab837c549e21e147b29d7b1ec2156a5, type: 3}
+  VehiclePrefab: {fileID: 4723651837440740932, guid: 6ea5c07f5a932be45a255f769d1dc71d, type: 3}
   _nameLabel: {fileID: 9215288169987175859}
   _deleteButton: {fileID: 7169649226166315244}
   _progressBar: {fileID: 5534174073501202091}
