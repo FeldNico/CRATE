@@ -42,7 +42,7 @@ public class SlidingPiece : MonoBehaviour, IPointerClickHandler
     {
         if (!Empty && _puzzle.IsInteractable)
         {
-            _puzzle.SwapPiece(this);
+            _puzzle.SwapPiece(this,true);
         }
     }
 }

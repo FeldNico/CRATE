@@ -63,11 +63,11 @@ public class SlidingPuzzle : MonoBehaviour
             }
 
             oldPieces[currentIndex++ % (Math.Max(Size.x,Size.y)*2)] = piece;
-            SwapPiece(piece);
+            SwapPiece(piece,false);
         }
     }
 
-    public void SwapPiece(SlidingPiece piece)
+    public void SwapPiece(SlidingPiece piece,bool check)
     {
         var empty = GetEmptyNeighbour(piece);
         if (empty == null)
@@ -90,29 +90,36 @@ public class SlidingPuzzle : MonoBehaviour
         _pieces[posA.x,posA.y] = empty;
         empty.Position = posA;
 
-        var finished = true;
-        foreach (var slidingPiece in _pieces)
+        if (check)
         {
-            if (!slidingPiece.IsCorrect)
+            var finished = true;
+            foreach (var slidingPiece in _pieces)
             {
-                finished = false;
-            }
-        }
-
-        if (finished)
-        {
-            var newType = CrateConfig.Instance.VehicleTypes[Random.Range(0, CrateConfig.Instance.VehicleTypes.Count)];
-            while (newType == _currentType)
-            {
-                newType = CrateConfig.Instance.VehicleTypes[Random.Range(0, CrateConfig.Instance.VehicleTypes.Count)];
+                if (!slidingPiece.IsCorrect)
+                {
+                    finished = false;
+                }
             }
 
-            StartCoroutine(Wait());
-            IEnumerator Wait()
+            if (finished)
             {
-                FindObjectOfType<FleetPanel>().ReturnVehicle(new Vehicle(_currentType,true));
-                yield return new WaitForSeconds(1);
-                Initalize(newType);
+                var newType = CrateConfig.Instance.VehicleTypes[Random.Range(0, CrateConfig.Instance.VehicleTypes.Count)];
+                while (newType == _currentType)
+                {
+                    newType = CrateConfig.Instance.VehicleTypes[Random.Range(0, CrateConfig.Instance.VehicleTypes.Count)];
+                }
+
+                StartCoroutine(Wait());
+                IEnumerator Wait()
+                {
+                    FindObjectOfType<FleetPanel>().ReturnVehicle(new Vehicle(_currentType,true));
+                    yield return new WaitForSeconds(1);
+                    Initalize(newType);
+                    IsInteractable = true;
+                }
+            }
+            else
+            {
                 IsInteractable = true;
             }
         }
