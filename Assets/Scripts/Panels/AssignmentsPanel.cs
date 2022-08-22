@@ -54,9 +54,6 @@ public class AssignmentsPanel : MonoBehaviour
                 {
                     assignmentPanel.transform.SetParent(_content2,false);
                 }
-
-                yield return new WaitForSeconds(_timeManager.DayDuration);
-                FindObjectOfType<LogManager>().DownloadFiles();
             }
         };
     }
