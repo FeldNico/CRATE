@@ -597,7 +597,7 @@ GameObject:
   - component: {fileID: 645295279}
   - component: {fileID: 645295278}
   m_Layer: 5
-  m_Name: Day
+  m_Name: TimePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -638,7 +638,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bd9f0619a3c8844e9e6a1d4cb3de22f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DayDuration: 15
+  DayDuration: 10
   _dayLabel: {fileID: 764445241}
   _progress: {fileID: 1788595381}
 --- !u!114 &645295279
@@ -3033,6 +3033,7 @@ GameObject:
   - component: {fileID: 2032971579}
   - component: {fileID: 2032971580}
   - component: {fileID: 2032971581}
+  - component: {fileID: 2032971582}
   m_Layer: 0
   m_Name: MainManager
   m_TagString: Untagged
@@ -3080,6 +3081,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _dictionary: {fileID: 11400000, guid: 838d800b0435af74e84d2a43fdb729b1, type: 2}
+--- !u!114 &2032971582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2032971578}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd3bd9e8d850468489b9d79c36423b4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2132304839
 GameObject:
   m_ObjectHideFlags: 0

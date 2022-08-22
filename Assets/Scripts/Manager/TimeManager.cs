@@ -4,10 +4,13 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class TimeManager : MonoBehaviour
 {
+    public UnityAction<int> OnNewDay;
+
     public float DayDuration = 10f;
 
     public float Day
@@ -43,6 +46,7 @@ public class TimeManager : MonoBehaviour
         var dayString = ((int) Day).ToString();
         if (_dayLabel != null && _dayLabel.text != dayString)
         {
+            OnNewDay?.Invoke((int) Day);
             _dayLabel.text = dayString;
         }
     }

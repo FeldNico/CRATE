@@ -38,7 +38,7 @@ public class AssignmentsPanel : MonoBehaviour
             }
         };
 
-        EventPanel.OnEventClose += (type) =>
+        AssignmentType.OnEventEnd += _ =>
         {
             StartCoroutine(Wait());
             IEnumerator Wait()
@@ -54,9 +54,10 @@ public class AssignmentsPanel : MonoBehaviour
                 {
                     assignmentPanel.transform.SetParent(_content2,false);
                 }
-                
+
+                yield return new WaitForSeconds(_timeManager.DayDuration);
+                FindObjectOfType<LogManager>().DownloadFiles();
             }
-            
         };
     }
     

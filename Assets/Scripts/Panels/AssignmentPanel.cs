@@ -3,10 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class AssignmentPanel : MonoBehaviour
 {
+    
     [SerializeField] private GameObject _vehicleAssignmentPanelPrefab;
     [SerializeField] private TMP_Text _label;
     [SerializeField] private TMP_Text _daysLabel;
@@ -18,6 +20,7 @@ public class AssignmentPanel : MonoBehaviour
 
     public void Initialize(AssignmentType assignmentType)
     {
+        AssignmentType.OnNewAssignmentGenerated?.Invoke(assignmentType);
         _assignmentType = assignmentType;
         _label.text = assignmentType.Name;
         _startDay = (int) FindObjectOfType<TimeManager>().Day;
@@ -33,7 +36,9 @@ public class AssignmentPanel : MonoBehaviour
 
         _button.onClick.AddListener(() =>
         {
-            FindObjectOfType<AssignedEventsPanel>().AddEvent(_assignmentType,(int) (_assignmentType.Days * 3f) - ((int) FindObjectOfType<TimeManager>().Day - _startDay));
+            var deadline = (int) (_assignmentType.Days * 3f) - ((int) FindObjectOfType<TimeManager>().Day - _startDay);
+            FindObjectOfType<AssignedEventsPanel>().AddEvent(_assignmentType,deadline);
+            AssignmentType.OnNewEventAssignment?.Invoke(_assignmentType,deadline);
             Destroy(gameObject);
         });
     }
@@ -48,6 +53,7 @@ public class AssignmentPanel : MonoBehaviour
         if (deadline < 0)
         {
             FindObjectOfType<PointsPanel>().Points -= _assignmentType.Difficulty / 4;
+            AssignmentType.OnAssignmentDeadline?.Invoke(_assignmentType,false);
             Destroy(gameObject);
         }
     }

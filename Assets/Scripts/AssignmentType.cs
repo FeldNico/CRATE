@@ -2,11 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 [Serializable]
 public class AssignmentType
 {
+    public static UnityAction<AssignmentType> OnEventQuit;
+    public static UnityAction<AssignmentType> OnWaitPerfom; 
+    public static UnityAction<AssignmentType> OnStartPerfom; 
+    public static UnityAction<AssignmentType> OnEventEnd; 
+    public static UnityAction<AssignmentType> OnNewAssignmentGenerated;
+    public static UnityAction<AssignmentType, int> OnNewEventAssignment;
+    public static UnityAction<AssignmentType, bool> OnAssignmentDeadline;
+    
     [Serializable]
     private struct VehicleTypePair
     {
@@ -53,6 +62,17 @@ public class AssignmentType
             }
             
         }
+    }
+
+    public override string ToString()
+    {
+        return String.Join(";", new[]
+        {
+            _name,
+            _difficulty.ToString(),
+            _days.ToString(),
+            String.Join(";",_vehiclesPerDay.Select(pair => pair.Type+";"+pair.Count)), 
+        });
     }
 
     private static bool GetVehiclesRecursive(List<VehicleType> types, int index, int difficultyPerDay, int days,

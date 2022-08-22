@@ -50,4 +50,13 @@ public class VehicleType : IEquatable<VehicleType>
     {
         return HashCode.Combine(VehicleName, Value, VehicleImage);
     }
+
+    public override string ToString()
+    {
+        return String.Join(";",new []
+        {
+            VehicleName,
+            Value.ToString()
+        });
+    }
 }

@@ -2,11 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class SlidingPiece : MonoBehaviour, IPointerClickHandler
 {
+    
+
     public Vector2Int Position;
     private Vector2Int _initialPosition;
 
@@ -44,5 +47,16 @@ public class SlidingPiece : MonoBehaviour, IPointerClickHandler
         {
             _puzzle.SwapPiece(this,true);
         }
+    }
+
+    public override string ToString()
+    {
+        return String.Join(";", new[]
+        {
+            _initialPosition.x,
+            _initialPosition.y,
+            Position.x,
+            Position.y
+        });
     }
 }

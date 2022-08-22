@@ -2,9 +2,12 @@ using System.Collections;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PointsPanel : MonoBehaviour
 {
+    public static UnityAction<int> OnPoints;
+
     [SerializeField] private TMP_Text _pointsLabel;
 
     private int _points = 0;
@@ -13,6 +16,7 @@ public class PointsPanel : MonoBehaviour
     {
         set
         {
+            OnPoints?.Invoke(value-_points);
             ShowHover(value-_points);
             _points = value;
             _pointsLabel.text = _points.ToString();

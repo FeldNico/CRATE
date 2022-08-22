@@ -10,7 +10,6 @@ using Random = UnityEngine.Random;
 
 public class EventPanel : MonoBehaviour
 {
-    public static UnityAction<AssignmentType> OnEventClose; 
 
     [SerializeField] private GameObject VehiclePrefab;
 
@@ -38,7 +37,6 @@ public class EventPanel : MonoBehaviour
     private TimeManager _timeManager;
     private GameObject _hover;
 
-    
     public void Initialize(AssignmentType type, int deadline)
     {
         _timeManager = FindObjectOfType<TimeManager>();
@@ -59,6 +57,7 @@ public class EventPanel : MonoBehaviour
         _startButton.onClick.AddListener(PerformPhase);
         _deleteButton.onClick.AddListener(() =>
         {
+            AssignmentType.OnEventQuit?.Invoke(_assignmentType);
             FindObjectOfType<PointsPanel>().Points -= _assignmentType.Difficulty / 2;
             Destroy(gameObject);
         });
@@ -67,6 +66,7 @@ public class EventPanel : MonoBehaviour
     
     private void PerformPhase()
     {
+        AssignmentType.OnWaitPerfom.Invoke(_assignmentType);
         _isProgressing = true;
         _deadlineLabel.text = "-";
         _startButton.interactable = false;
@@ -87,6 +87,7 @@ public class EventPanel : MonoBehaviour
                 yield return null;
                 _progressBar.value = (Time.time - startDay)/duration;
             }
+            AssignmentType.OnStartPerfom.Invoke(_assignmentType);
             _progressBar.value = 1;
             _startButton.GetComponentInChildren<TMP_Text>().text = "Event läuft...";
             startDay = Time.time;
@@ -104,43 +105,6 @@ public class EventPanel : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    
-    private void ShowHover(int days)
-    {
-        if (_hover != null)
-        {
-            Destroy(_hover);
-        }
-        var canvas = FindObjectOfType<Canvas>();
-        var go = new GameObject().AddComponent<TextMeshProUGUI>();
-        _hover = go.gameObject;
-        go.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-        var rect = go.transform as RectTransform;
-        rect.sizeDelta = new Vector2(100, 100);
-        go.fontSize = 20;
-        go.alignment = TextAlignmentOptions.Center;
-        go.transform.SetParent(canvas.transform,false);
-        go.transform.position = _durationLabel.transform.position + Vector3.up *20f;
-        if (days > 0)
-        {
-            go.text = "+"+days;
-            go.faceColor = Color.red;
-        }
-        else
-        {
-            go.text = days.ToString();
-            go.faceColor = Color.green;
-        }
-
-        go.text += " Tag(e)";
-
-        StartCoroutine(WaitDestroy());
-        IEnumerator WaitDestroy()
-        {
-            yield return new WaitForSeconds(1f);
-            Destroy(_hover);
-        }
-    }
 
     private void Update()
     {
@@ -152,6 +116,7 @@ public class EventPanel : MonoBehaviour
         _deadlineLabel.text = daysLeft + " Tage";
         if (daysLeft < 0 && _progressBar.value <=0.8f)
         {
+            AssignmentType.OnAssignmentDeadline.Invoke(_assignmentType,true);
             FindObjectOfType<PointsPanel>().Points -= _assignmentType.Difficulty / 3;
             Destroy(gameObject);
             return;
@@ -171,7 +136,7 @@ public class EventPanel : MonoBehaviour
 
     private void OnDestroy()
     {
-        OnEventClose?.Invoke(_assignmentType);
+        AssignmentType.OnEventEnd?.Invoke(_assignmentType);
         _isProgressing = false;
         if (_hover != null)
         {

@@ -4,10 +4,13 @@ using System.IO;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class VehicleAssignedEventPanel: MonoBehaviour
 {
+    public static UnityAction<VehicleType> MissClick;
+
     public VehicleType Type { private set; get; }
 
     private List<Vehicle> _vehicles = new List<Vehicle>();
@@ -37,6 +40,7 @@ public class VehicleAssignedEventPanel: MonoBehaviour
         {
             if (IsSatisfied)
             {
+                MissClick?.Invoke(Type);
                 FindObjectOfType<PointsPanel>().Points -= 1;
                 return;
             }

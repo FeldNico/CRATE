@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class FleetPanel : MonoBehaviour
 {
+    public static UnityAction<Vehicle> OnVehicleTypeRequest;
+    public static UnityAction<Vehicle> OnVehicleTypeReturn;
 
     [SerializeField] private GameObject _vehicleFleetPrefab;
 
@@ -32,11 +35,14 @@ public class FleetPanel : MonoBehaviour
         {
             return null;
         }
-        return panel.RequestVehicle();
+        var vehicle = panel.RequestVehicle();
+        OnVehicleTypeRequest?.Invoke(vehicle);
+        return vehicle;
     }
 
     public void ReturnVehicle(Vehicle vehicle)
     {
+        OnVehicleTypeReturn?.Invoke(vehicle);
         var panel = GetComponentsInChildren<VehicleFleetPanel>().FirstOrDefault(p => p.Type == vehicle.Type);
         if (panel != null)
         {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,5 +13,14 @@ public class Vehicle
     {
         Type = type;
         IsBonus = isBonus;
+    }
+
+    public override string ToString()
+    {
+        return String.Join(";",new []
+        {
+            Type.ToString(),
+            IsBonus.ToString()
+        });
     }
 }

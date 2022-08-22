@@ -1,11 +1,14 @@
 using System;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class MainManager : MonoBehaviour
 {
     public UnityAction OnExperimentStart;
+    
+    public string SubjectID { private set; get; }
     
     private void Start()
     {
@@ -16,6 +19,7 @@ public class MainManager : MonoBehaviour
 
     public void OnExperimentStartMessage(string sid)
     {
+        SubjectID = sid;
         OnExperimentStart?.Invoke();
     }
 

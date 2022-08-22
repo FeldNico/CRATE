@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class SlidingPuzzle : MonoBehaviour
 {
-
+    public static UnityAction<VehicleType> OnNewPuzzle;
+    public static UnityAction<SlidingPiece, SlidingPiece> OnPieceSwap;
+    
     public bool IsInteractable { private set; get; } = true;
     [field: SerializeField] public Vector2Int Size { private set; get; }
     [SerializeField] private GameObject _piecePrefab;
@@ -20,6 +23,7 @@ public class SlidingPuzzle : MonoBehaviour
 
     private void Awake()
     {
+        Random.InitState(1337);
         FindObjectOfType<MainManager>().OnExperimentStart += () =>
         {
             var sizeDelta = (_content.transform as RectTransform).sizeDelta;
@@ -36,6 +40,7 @@ public class SlidingPuzzle : MonoBehaviour
 
     public void Initalize(VehicleType type)
     {
+        OnNewPuzzle?.Invoke(type);
         _currentType = type;
         foreach (var child in _content.GetComponentsInChildren<SlidingPiece>())
         {
@@ -54,7 +59,7 @@ public class SlidingPuzzle : MonoBehaviour
 
         var oldPieces = new SlidingPiece[Math.Max(Size.x,Size.y)*2];
         var currentIndex = 0;
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 30; i++)
         {
             var piece = _pieces[Random.Range(0, Size.x), Random.Range(0, Size.y)];
             while (GetEmptyNeighbour(piece) == null && !oldPieces.ToList().Contains(piece))
@@ -75,6 +80,12 @@ public class SlidingPuzzle : MonoBehaviour
             return;
         }
 
+        if (check)
+        {
+            OnPieceSwap?.Invoke(piece,empty);
+        }
+        
+        
         IsInteractable = false;
         
         var indexA = piece.transform.GetSiblingIndex();
@@ -89,6 +100,8 @@ public class SlidingPuzzle : MonoBehaviour
         empty.transform.SetSiblingIndex(indexA);
         _pieces[posA.x,posA.y] = empty;
         empty.Position = posA;
+        
+        
 
         if (check)
         {
