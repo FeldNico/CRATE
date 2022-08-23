@@ -22,5 +22,4 @@ public class MainManager : MonoBehaviour
         SubjectID = sid;
         OnExperimentStart?.Invoke();
     }
-
 }

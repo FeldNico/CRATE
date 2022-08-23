@@ -24,7 +24,7 @@ public class LanguageManager : MonoBehaviour
     {
         _dictionary.CurrentLanguage = language;
     }
-    
+
     private void Update()
     {
         foreach (var text in FindObjectsOfType<TMP_Text>())
@@ -37,4 +37,5 @@ public class LanguageManager : MonoBehaviour
             }
         }
     }
+
 }

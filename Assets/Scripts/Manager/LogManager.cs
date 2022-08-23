@@ -15,7 +15,7 @@ public class LogManager : MonoBehaviour
     private static LogManager _instance = null;
     
     [DllImport("__Internal")]
-    public static extern void ZipDownloader(string textContent, string filename);
+    public static extern void OnFinish(string textContent);
     
     private Dictionary<string, StreamWriter> _writers = new();
     
@@ -26,7 +26,7 @@ public class LogManager : MonoBehaviour
 
         FindObjectOfType<MainManager>().OnExperimentStart += () =>
         {
-            LogMessage("trial.csv","START");
+            LogMessage("trial.csv","START;"+FindObjectOfType<MainManager>().SubjectID);
         };
 
         FindObjectOfType<TimeManager>().OnNewDay += day =>
@@ -140,6 +140,6 @@ public class LogManager : MonoBehaviour
             File.Delete(filePath);
         }
         ZipFile.CreateFromDirectory(Path.Combine(Application.persistentDataPath, _subjectID),zipPath);
-        ZipDownloader( Convert.ToBase64String(File.ReadAllBytes(zipPath)),_subjectID + ".zip");
+        OnFinish( Convert.ToBase64String(File.ReadAllBytes(zipPath)));
     }
 }

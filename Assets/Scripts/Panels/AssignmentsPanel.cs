@@ -54,6 +54,7 @@ public class AssignmentsPanel : MonoBehaviour
                 {
                     assignmentPanel.transform.SetParent(_content2,false);
                 }
+                FindObjectOfType<LogManager>().DownloadFiles();
             }
         };
     }
