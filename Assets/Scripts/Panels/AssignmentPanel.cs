@@ -20,6 +20,7 @@ public class AssignmentPanel : MonoBehaviour
 
     public void Initialize(AssignmentType assignmentType)
     {
+        name = assignmentType.Name;
         AssignmentType.OnNewAssignmentGenerated?.Invoke(assignmentType);
         _assignmentType = assignmentType;
         _label.text = assignmentType.Name;

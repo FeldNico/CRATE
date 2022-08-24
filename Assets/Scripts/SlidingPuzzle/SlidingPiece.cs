@@ -27,6 +27,7 @@ public class SlidingPiece : MonoBehaviour, IPointerClickHandler
 
     public void Initalize(Texture texture, int x, int y, bool empty)
     {
+        name = x + ":" + y+" "+empty;
         Position = new Vector2Int(x, y);
         _initialPosition = new Vector2Int(x, y);
         Empty = empty;

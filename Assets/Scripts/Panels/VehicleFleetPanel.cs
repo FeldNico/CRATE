@@ -21,6 +21,7 @@ public class VehicleFleetPanel: MonoBehaviour
 
     public void Initialize(VehicleType type,int count)
     {
+        name = type.VehicleName;
         Type = type;
         _name.text = type.VehicleName;
         _image.sprite = type.VehicleImage;

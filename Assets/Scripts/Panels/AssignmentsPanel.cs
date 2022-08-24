@@ -41,21 +41,29 @@ public class AssignmentsPanel : MonoBehaviour
         AssignmentType.OnEventEnd += _ =>
         {
             StartCoroutine(Wait());
-            IEnumerator Wait()
-            {
-                yield return new WaitForSeconds(_timeManager.GetTimeUntilNextDay());
-                var assignmentPanel = Instantiate(_assignementPanelPrefab).GetComponent<AssignmentPanel>();
-                assignmentPanel.Initialize(CrateConfig.Instance.AssignmentTypes[_assignmentTypeIndex++]);
-                if (_content1.childCount < _content2.childCount)
-                {
-                    assignmentPanel.transform.SetParent(_content1,false);
-                }
-                else
-                {
-                    assignmentPanel.transform.SetParent(_content2,false);
-                }
-            }
+        };
+        AssignmentType.OnAssignmentDeadline += (_, _) =>
+        {
+            StartCoroutine(Wait());
+        };
+        AssignmentType.OnEventQuit += _ =>
+        {
+            StartCoroutine(Wait());
         };
     }
     
+    private IEnumerator Wait()
+    {
+        yield return new WaitForSeconds(_timeManager.GetTimeUntilNextDay());
+        var assignmentPanel = Instantiate(_assignementPanelPrefab).GetComponent<AssignmentPanel>();
+        assignmentPanel.Initialize(CrateConfig.Instance.AssignmentTypes[_assignmentTypeIndex++]);
+        if (_content1.childCount < _content2.childCount)
+        {
+            assignmentPanel.transform.SetParent(_content1,false);
+        }
+        else
+        {
+            assignmentPanel.transform.SetParent(_content2,false);
+        }
+    }
 }

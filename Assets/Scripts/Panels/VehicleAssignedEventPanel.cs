@@ -45,6 +45,7 @@ public class VehicleAssignedEventPanel: MonoBehaviour
                 return;
             }
             var vehicle = _fleetPanel.RequestVehicle(Type);
+            FleetPanel.OnVehicleTypeRequest?.Invoke(GetComponentInParent<EventPanel>().AssignmentType,vehicle);
             if (vehicle != null)
             {
                 _vehicles.Add(vehicle);
@@ -67,6 +68,7 @@ public class VehicleAssignedEventPanel: MonoBehaviour
 
     public void Initialize(VehicleType type, int count)
     {
+        name = type.VehicleName;
         Type = type;
         _maxCount = count;
         _name.text = type.VehicleName;

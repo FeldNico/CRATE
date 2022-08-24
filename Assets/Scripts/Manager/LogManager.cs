@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class LogManager : MonoBehaviour
 {
@@ -44,6 +45,11 @@ public class LogManager : MonoBehaviour
             LogMessage("NEW_DAY;" + day);
         };
 
+        FindObjectOfType<ClickDetector>().OnClick += (pos, go) =>
+        {
+            LogMessage("CLICK;" + pos.ToString("F4")+";"+ (go != null ? go.GetFullName(): "NULL"));
+        };
+
         AssignmentType.OnEventQuit += type =>
         {
             LogMessage("EVENT_QUIT;"+type);
@@ -72,9 +78,9 @@ public class LogManager : MonoBehaviour
         {
             LogMessage("EVENT_FINISHED;"+type);
         };
-        FleetPanel.OnVehicleTypeRequest += vehicle =>
+        FleetPanel.OnVehicleTypeRequest += (assignmentType,vehicle) =>
         {
-            LogMessage(vehicle.ToString());
+            LogMessage("VEHICLE_REQUEST;"+assignmentType+";"+(vehicle != null ? vehicle : "NULL"));
         };
         FleetPanel.OnVehicleTypeReturn += vehicle =>
         {
@@ -115,7 +121,9 @@ public class LogManager : MonoBehaviour
         }
 
         var now = DateTimeOffset.Now;
-        _writers[path].WriteLine(now.ToString("dd/MM/yyyy HH:mm:ss.fff") + ";" + now.ToUnixTimeMilliseconds() + ";" + message);
+        var msg = now.ToString("dd/MM/yyyy HH:mm:ss.fff") + ";" + now.ToUnixTimeMilliseconds() + ";" + message;
+        Debug.Log(msg);
+        _writers[path].WriteLine(msg);
     }
     
     public static void Log(string message)
@@ -136,9 +144,10 @@ public class LogManager : MonoBehaviour
         {
             writer.Flush();
         }
-
+        #if !UNITY_EDITOR && UNITY_WEBGL
         var filename = _mainManager.IsTest ? "test.csv" : "trial.csv";
         var filePath = Path.Combine(Application.persistentDataPath,_mainManager.IsTest ? "test.csv" : "trial.csv");
         OnFinish( filename,Convert.ToBase64String(File.ReadAllBytes(filePath)));
+        #endif
     }
 }

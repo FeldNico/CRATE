@@ -40,6 +40,7 @@ public class SlidingPuzzle : MonoBehaviour
 
     public void Initalize(VehicleType type)
     {
+        name = type.VehicleName+" Puzzle";
         OnNewPuzzle?.Invoke(type);
         _currentType = type;
         foreach (var child in _content.GetComponentsInChildren<SlidingPiece>())

@@ -30,7 +30,7 @@ public class EventPanel : MonoBehaviour
     [SerializeField] private RectTransform _content;
     
     private List<VehicleAssignedEventPanel> _vehiclePanels = new();
-    private AssignmentType _assignmentType;
+    public AssignmentType AssignmentType { private set; get; }
     private int _deadline;
     private int _startDay;
     private bool _isProgressing;
@@ -39,13 +39,14 @@ public class EventPanel : MonoBehaviour
 
     public void Initialize(AssignmentType type, int deadline)
     {
+        name = AssignmentType.Name;
         _timeManager = FindObjectOfType<TimeManager>();
-        _assignmentType = type;
+        AssignmentType = type;
         _deadline = deadline;
-        _nameLabel.text = _assignmentType.Name;
+        _nameLabel.text = AssignmentType.Name;
         _deadlineLabel.text = _deadline + " Tage";
-        _durationLabel.text = _assignmentType.Days+" Tage";
-        _pointsLabel.text = _assignmentType.Difficulty + " Punkte";
+        _durationLabel.text = AssignmentType.Days+" Tage";
+        _pointsLabel.text = AssignmentType.Difficulty + " Punkte";
         _startDay = (int) _timeManager.Day;
         foreach (var (vehicleType,count) in type.VehiclesPerDay)
         {
@@ -57,8 +58,8 @@ public class EventPanel : MonoBehaviour
         _startButton.onClick.AddListener(PerformPhase);
         _deleteButton.onClick.AddListener(() =>
         {
-            AssignmentType.OnEventQuit?.Invoke(_assignmentType);
-            FindObjectOfType<PointsPanel>().Points -= _assignmentType.Difficulty / 2;
+            AssignmentType.OnEventQuit?.Invoke(AssignmentType);
+            FindObjectOfType<PointsPanel>().Points -= AssignmentType.Difficulty / 2;
             Destroy(gameObject);
         });
     }
@@ -66,7 +67,7 @@ public class EventPanel : MonoBehaviour
     
     private void PerformPhase()
     {
-        AssignmentType.OnWaitPerfom.Invoke(_assignmentType);
+        AssignmentType.OnWaitPerfom.Invoke(AssignmentType);
         _isProgressing = true;
         _deadlineLabel.text = "-";
         _startButton.interactable = false;
@@ -87,11 +88,11 @@ public class EventPanel : MonoBehaviour
                 yield return null;
                 _progressBar.value = (Time.time - startDay)/duration;
             }
-            AssignmentType.OnStartPerfom.Invoke(_assignmentType);
+            AssignmentType.OnStartPerfom.Invoke(AssignmentType);
             _progressBar.value = 1;
             _startButton.GetComponentInChildren<TMP_Text>().text = "Event läuft...";
             startDay = Time.time;
-            duration = _timeManager.GetTimeStampInDays(_assignmentType.Days) - Time.time;
+            duration = _timeManager.GetTimeStampInDays(AssignmentType.Days) - Time.time;
             _progressBar.value = 0f;
             while (Time.time < startDay + duration)
             {
@@ -101,8 +102,8 @@ public class EventPanel : MonoBehaviour
             }
             _progressBar.value = 1;
             _startButton.interactable = true;
-            FindObjectOfType<PointsPanel>().Points += _assignmentType.Difficulty;
-            AssignmentType.OnEventEnd?.Invoke(_assignmentType);
+            FindObjectOfType<PointsPanel>().Points += AssignmentType.Difficulty;
+            AssignmentType.OnEventEnd?.Invoke(AssignmentType);
             Destroy(gameObject);
         }
     }
@@ -117,8 +118,8 @@ public class EventPanel : MonoBehaviour
         _deadlineLabel.text = daysLeft + " Tage";
         if (daysLeft < 0 && _progressBar.value <=0.8f)
         {
-            AssignmentType.OnAssignmentDeadline.Invoke(_assignmentType,true);
-            FindObjectOfType<PointsPanel>().Points -= _assignmentType.Difficulty / 3;
+            AssignmentType.OnAssignmentDeadline.Invoke(AssignmentType,true);
+            FindObjectOfType<PointsPanel>().Points -= AssignmentType.Difficulty / 3;
             Destroy(gameObject);
             return;
         }
