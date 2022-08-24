@@ -71,7 +71,8 @@
           unityInstance.SetFullscreen(1);
           setTimeout(() => {
               const urlParams = new URLSearchParams(window.location.search);
-            unityInstance.SendMessage("MainManager","OnExperimentStartMessage",urlParams.get('codename'));
+              console.log(urlParams.get('test')+" : "+urlParams.get('duration'));
+            unityInstance.SendMessage("MainManager","OnExperimentStartMessage",urlParams.get('test')+";"+urlParams.get('duration'));
           }, 3000);
            
         }).catch((message) => {

@@ -102,6 +102,7 @@ public class EventPanel : MonoBehaviour
             _progressBar.value = 1;
             _startButton.interactable = true;
             FindObjectOfType<PointsPanel>().Points += _assignmentType.Difficulty;
+            AssignmentType.OnEventEnd?.Invoke(_assignmentType);
             Destroy(gameObject);
         }
     }
@@ -136,7 +137,6 @@ public class EventPanel : MonoBehaviour
 
     private void OnDestroy()
     {
-        AssignmentType.OnEventEnd?.Invoke(_assignmentType);
         _isProgressing = false;
         if (_hover != null)
         {
