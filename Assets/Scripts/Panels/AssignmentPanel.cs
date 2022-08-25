@@ -17,9 +17,11 @@ public class AssignmentPanel : MonoBehaviour
 
     private AssignmentType _assignmentType;
     private int _startDay = 0;
+    private MainManager _mainManager;
 
     public void Initialize(AssignmentType assignmentType)
     {
+        _mainManager = FindObjectOfType<MainManager>();
         name = assignmentType.Name;
         AssignmentType.OnNewAssignmentGenerated?.Invoke(assignmentType);
         _assignmentType = assignmentType;
@@ -37,6 +39,7 @@ public class AssignmentPanel : MonoBehaviour
 
         _button.onClick.AddListener(() =>
         {
+            _mainManager.PlaySound(_mainManager.EventFinished);
             var deadline = (int) (_assignmentType.Days * 3f) - ((int) FindObjectOfType<TimeManager>().Day - _startDay);
             FindObjectOfType<AssignedEventsPanel>().AddEvent(_assignmentType,deadline);
             AssignmentType.OnNewEventAssignment?.Invoke(_assignmentType,deadline);

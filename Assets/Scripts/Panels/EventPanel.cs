@@ -35,12 +35,14 @@ public class EventPanel : MonoBehaviour
     private int _startDay;
     private bool _isProgressing;
     private TimeManager _timeManager;
+    private MainManager _mainManager;
     private GameObject _hover;
 
     public void Initialize(AssignmentType type, int deadline)
     {
-        name = AssignmentType.Name;
+        name = type.Name;
         _timeManager = FindObjectOfType<TimeManager>();
+        _mainManager = FindObjectOfType<MainManager>();
         AssignmentType = type;
         _deadline = deadline;
         _nameLabel.text = AssignmentType.Name;
@@ -58,6 +60,7 @@ public class EventPanel : MonoBehaviour
         _startButton.onClick.AddListener(PerformPhase);
         _deleteButton.onClick.AddListener(() =>
         {
+            _mainManager.PlaySound(_mainManager.EventClosed);
             AssignmentType.OnEventQuit?.Invoke(AssignmentType);
             FindObjectOfType<PointsPanel>().Points -= AssignmentType.Difficulty / 2;
             Destroy(gameObject);
@@ -103,6 +106,7 @@ public class EventPanel : MonoBehaviour
             _progressBar.value = 1;
             _startButton.interactable = true;
             FindObjectOfType<PointsPanel>().Points += AssignmentType.Difficulty;
+            _mainManager.PlaySound(_mainManager.EventFinished);
             AssignmentType.OnEventEnd?.Invoke(AssignmentType);
             Destroy(gameObject);
         }

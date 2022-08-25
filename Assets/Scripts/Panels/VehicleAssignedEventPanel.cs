@@ -32,12 +32,15 @@ public class VehicleAssignedEventPanel: MonoBehaviour
 
     private int _maxCount = 0;
     private FleetPanel _fleetPanel;
+    private MainManager _mainManager;
 
     private void Awake()
     {
+        _mainManager = FindObjectOfType<MainManager>();
         _fleetPanel = FindObjectOfType<FleetPanel>();
         _addButton.onClick.AddListener(() =>
         {
+            _mainManager.PlaySound(_mainManager.VehicleClick);
             if (IsSatisfied)
             {
                 MissClick?.Invoke(Type);
@@ -57,6 +60,7 @@ public class VehicleAssignedEventPanel: MonoBehaviour
         });
         _removeButton.onClick.AddListener(() =>
         {
+            _mainManager.PlaySound(_mainManager.VehicleClick);
             var vehicle = _vehicles.OrderBy(v => !v.IsBonus).FirstOrDefault();
             if (vehicle != null)
             {

@@ -19,12 +19,15 @@ public class SlidingPuzzle : MonoBehaviour
     [SerializeField] private GridLayoutGroup _content;
     private VehicleType _currentType;
 
+    private MainManager _mainManager;
+
     private SlidingPiece[,] _pieces;
 
     private void Awake()
     {
         Random.InitState(1337);
-        FindObjectOfType<MainManager>().OnExperimentStart += () =>
+        _mainManager = FindObjectOfType<MainManager>();
+        _mainManager.OnExperimentStart += () =>
         {
             var sizeDelta = (_content.transform as RectTransform).sizeDelta;
             var min = Mathf.Min(sizeDelta.x, sizeDelta.y) - 5*Mathf.Max(Size.x,Size.y);
@@ -84,8 +87,8 @@ public class SlidingPuzzle : MonoBehaviour
         if (check)
         {
             OnPieceSwap?.Invoke(piece,empty);
+            _mainManager.PlaySound(_mainManager.PieceSwap);
         }
-        
         
         IsInteractable = false;
         
@@ -117,12 +120,12 @@ public class SlidingPuzzle : MonoBehaviour
 
             if (finished)
             {
+                _mainManager.PlaySound(_mainManager.PuzzleSolved);
                 var newType = CrateConfig.Instance.VehicleTypes[Random.Range(0, CrateConfig.Instance.VehicleTypes.Count)];
                 while (newType == _currentType)
                 {
                     newType = CrateConfig.Instance.VehicleTypes[Random.Range(0, CrateConfig.Instance.VehicleTypes.Count)];
                 }
-
                 StartCoroutine(Wait());
                 IEnumerator Wait()
                 {
