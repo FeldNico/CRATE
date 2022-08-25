@@ -7,6 +7,15 @@
             socket.send(message)
             socket.close()
         }
+    },
+    OnStart: function(isTest){
+            var message = "START;"+UTF8ToString(isTest);
+            console.log(isTest+" : "+message);
+            var socket = new WebSocket('ws://localhost:8080/crate');
+            socket.onopen = () => {
+                socket.send(message)
+                socket.close()
+            }
     }
 }
 mergeInto(LibraryManager.library, WebSocketHandler);

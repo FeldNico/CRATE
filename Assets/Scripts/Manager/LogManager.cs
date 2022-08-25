@@ -17,6 +17,9 @@ public class LogManager : MonoBehaviour
     
     [DllImport("__Internal")]
     public static extern void OnFinish(string filename,string textContent);
+    
+    [DllImport("__Internal")]
+    public static extern void OnStart(string isTest);
 
     private MainManager _mainManager;
     private Dictionary<string, StreamWriter> _writers = new();
@@ -37,7 +40,11 @@ public class LogManager : MonoBehaviour
         
         _mainManager.OnExperimentStart += () =>
         {
+#if !UNITY_EDITOR
+            OnStart(_mainManager.IsTest? "1" : "0");
+#endif            
             LogMessage("START");
+            
         };
 
         FindObjectOfType<TimeManager>().OnNewDay += day =>
