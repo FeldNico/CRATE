@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
-using Random = UnityEngine.Random;
+using Random = System.Random;
 
 [Serializable]
 public class AssignmentType
@@ -22,6 +22,8 @@ public class AssignmentType
         public VehicleType Type;
         public int Count;
     }
+
+    private static Random _random = null;
     
     [SerializeField] private string _name;
     public string Name => _name;
@@ -75,6 +77,63 @@ public class AssignmentType
         });
     }
 
+    public static AssignmentType GenerateRandom()
+    {
+        if (_random == null)
+        {
+            var isTest = GameObject.FindObjectOfType<MainManager>().IsTest;
+            _random = isTest ? new Random() : new Random(CrateConfig.Instance.Seed);
+        }
+
+        (int, int, Dictionary<VehicleType, int>) result = (-1, 0, null);
+        while (result.Item1 == -1)
+        {
+            result = TryRandomConfiguration();
+        }
+        
+        var assigmentType = new AssignmentType();
+        var name = CrateConfig.Instance.Prefixes[_random.Next(0,CrateConfig.Instance.Prefixes.Count)] + " " +
+                   CrateConfig.Instance.Suffixes[_random.Next(0,CrateConfig.Instance.Suffixes.Count)];
+
+        assigmentType._name = name;
+        assigmentType._difficulty = result.Item2;
+        assigmentType._days = result.Item1;
+        assigmentType.VehiclesPerDay = result.Item3;
+        return assigmentType;
+    }
+
+    private static (int,int,Dictionary<VehicleType, int>) TryRandomConfiguration()
+    {
+        var difficulty = _random.Next(1, 70);
+        var possibleDays = Enumerable.Range(CrateConfig.Instance.MinMaxDays.x, CrateConfig.Instance.MinMaxDays.y).Where(day => difficulty % day ==0);
+        var types = CrateConfig.Instance.VehicleTypes.OrderBy(_ => _random.Next()).ToList();
+        
+        while (!possibleDays.Any())
+        {
+            difficulty = _random.Next(1, 70);
+            possibleDays = Enumerable.Range(CrateConfig.Instance.MinMaxDays.x, CrateConfig.Instance.MinMaxDays.y).Where(day => difficulty % day ==0);
+        }
+        Dictionary<VehicleType, int> fleet = new Dictionary<VehicleType, int>();
+        possibleDays = possibleDays.OrderBy(_ => _random.Next());
+        var days = -1;
+        foreach (var possibleDay in possibleDays)
+        {
+            fleet.Clear();
+            if (GetVehiclesRecursive(types, 0, difficulty / possibleDay,possibleDay, fleet))
+            {
+                days = possibleDay;
+                break;
+            }
+        }
+
+        if (days == -1)
+        {
+            return (-1, 0, null);
+        }
+
+        return (days, difficulty, fleet);
+    }
+    
     private static bool GetVehiclesRecursive(List<VehicleType> types, int index, int difficultyPerDay, int days,
         Dictionary<VehicleType, int> previousTypes)
     {
@@ -84,7 +143,7 @@ public class AssignmentType
         }
         
         var possibleCounts = Enumerable.Range(0, CrateConfig.Instance.MaxVehiclesPerTypePerDay)
-            .Where(count => count * types[index].Value <= difficultyPerDay && count <= CrateConfig.Instance.GetFleet()[types[index]]).OrderBy(_ => new System.Random().Next());
+            .Where(count => count * types[index].Value <= difficultyPerDay && count <= CrateConfig.Instance.GetFleet()[types[index]]).OrderBy(_ => _random.Next());
 
         foreach (var count in possibleCounts)
         {
@@ -102,7 +161,7 @@ public class AssignmentType
             else
             {
                 if (previousTypes.Select(pair => pair.Key.Value * pair.Value).Sum() ==
-                    difficultyPerDay && previousTypes.Count >= CrateConfig.Instance.MinTypeCount && CrateConfig.Instance.AssignmentTypes.All(assignmentType => assignmentType.Days != days || assignmentType.Difficulty != difficultyPerDay*days))
+                    difficultyPerDay && previousTypes.Count >= CrateConfig.Instance.MinTypeCount)
                 {
                     return true;
                 }
@@ -114,44 +173,5 @@ public class AssignmentType
             previousTypes.Remove(types[index]);
         }
         return false;
-    }
-    
-    public static AssignmentType GenerateRandom(int difficulty)
-    {
-        var types = CrateConfig.Instance.VehicleTypes.OrderBy(_ => new System.Random().Next()).ToList();
-        
-        var possibleDays = Enumerable.Range(CrateConfig.Instance.MinMaxDays.x, CrateConfig.Instance.MinMaxDays.y).Where(day => difficulty % day ==0)
-            .OrderBy(_ => new System.Random().Next());
-        Dictionary<VehicleType, int> fleet = new Dictionary<VehicleType, int>();
-        var days = -1;
-        foreach (var possibleDay in possibleDays)
-        {
-            fleet.Clear();
-            if (GetVehiclesRecursive(types, 0, difficulty / possibleDay,possibleDay, fleet))
-            {
-                days = possibleDay;
-                break;
-            }
-        }
-
-        if (days == -1)
-        {
-            return null;
-        }
-
-        var assigmentType = new AssignmentType();
-        var name = CrateConfig.Instance.Prefixes[Random.Range(0, CrateConfig.Instance.Prefixes.Count)] + " " +
-                   CrateConfig.Instance.Suffixes[Random.Range(0, CrateConfig.Instance.Suffixes.Count)];
-        while (CrateConfig.Instance.AssignmentTypes.Any(type => type.Name == name))
-        {
-            name = CrateConfig.Instance.Prefixes[Random.Range(0, CrateConfig.Instance.Prefixes.Count)] + " " +
-                   CrateConfig.Instance.Suffixes[Random.Range(0, CrateConfig.Instance.Suffixes.Count)];
-        }
-
-        assigmentType._name = name;
-        assigmentType._difficulty = difficulty;
-        assigmentType._days = days;
-        assigmentType.VehiclesPerDay = fleet;
-        return assigmentType;
     }
 }

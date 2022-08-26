@@ -1,11 +1,5 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
-using Random = UnityEngine.Random;
 
 public class AssignmentsPanel : MonoBehaviour
 {
@@ -15,7 +9,7 @@ public class AssignmentsPanel : MonoBehaviour
     
     private TimeManager _timeManager;
     private MainManager _mainManager;
-    private int _assignmentTypeIndex = 0; 
+    private int _assignmentTypeIndex = 0;
 
     private void Awake()
     {
@@ -27,13 +21,13 @@ public class AssignmentsPanel : MonoBehaviour
             for (int i = 0; i < 3; i++)
             {
                 var assignmentPanel = Instantiate(_assignementPanelPrefab).GetComponent<AssignmentPanel>();
-                assignmentPanel.Initialize(CrateConfig.Instance.AssignmentTypes[_assignmentTypeIndex++]);
+                assignmentPanel.Initialize(AssignmentType.GenerateRandom());
                 assignmentPanel.transform.SetParent(_content1,false);
             }
             for (int i = 0; i < 3; i++)
             {
                 var assignmentPanel = Instantiate(_assignementPanelPrefab).GetComponent<AssignmentPanel>();
-                assignmentPanel.Initialize(CrateConfig.Instance.AssignmentTypes[_assignmentTypeIndex++]);
+                assignmentPanel.Initialize(AssignmentType.GenerateRandom());
                 assignmentPanel.transform.SetParent(_content2,false);
             }
         };
@@ -56,7 +50,7 @@ public class AssignmentsPanel : MonoBehaviour
     {
         yield return new WaitForSeconds(_timeManager.GetTimeUntilNextDay());
         var assignmentPanel = Instantiate(_assignementPanelPrefab).GetComponent<AssignmentPanel>();
-        assignmentPanel.Initialize(CrateConfig.Instance.AssignmentTypes[_assignmentTypeIndex++]);
+        assignmentPanel.Initialize(AssignmentType.GenerateRandom());
         if (_content1.childCount < _content2.childCount)
         {
             assignmentPanel.transform.SetParent(_content1,false);

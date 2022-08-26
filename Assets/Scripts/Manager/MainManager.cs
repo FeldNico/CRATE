@@ -57,7 +57,7 @@ public class MainManager : MonoBehaviour
             SlidingPuzzle.OnNewPuzzle += _ =>
             {
                 finishedPuzzles++;
-                if (finishedPuzzles > 1 && finishedEvents > 2)
+                if (finishedPuzzles > 0 && finishedEvents > 2)
                 {
                     FindObjectOfType<LogManager>().DownloadFiles();
                 }
@@ -65,7 +65,7 @@ public class MainManager : MonoBehaviour
             AssignmentType.OnEventEnd += _ =>
             {
                 finishedEvents++;
-                if (finishedPuzzles > 1 && finishedEvents > 2)
+                if (finishedPuzzles > 0 && finishedEvents > 2)
                 {
                     FindObjectOfType<LogManager>().DownloadFiles();
                 }

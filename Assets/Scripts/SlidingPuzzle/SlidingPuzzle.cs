@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
+using Random = System.Random;
 
 public class SlidingPuzzle : MonoBehaviour
 {
@@ -17,18 +17,22 @@ public class SlidingPuzzle : MonoBehaviour
     [field: SerializeField] public Vector2Int Size { private set; get; }
     [SerializeField] private GameObject _piecePrefab;
     [SerializeField] private GridLayoutGroup _content;
+    
     private VehicleType _currentType;
-
     private MainManager _mainManager;
-
     private SlidingPiece[,] _pieces;
+    private Random _random;
 
     private void Awake()
     {
-        Random.InitState(1337);
         _mainManager = FindObjectOfType<MainManager>();
         _mainManager.OnExperimentStart += () =>
         {
+            if (_random == null)
+            {
+                _random = _mainManager.IsTest ? new Random() : new Random(CrateConfig.Instance.Seed);
+            }
+            
             var sizeDelta = (_content.transform as RectTransform).sizeDelta;
             var min = Mathf.Min(sizeDelta.x, sizeDelta.y) - 5*Mathf.Max(Size.x,Size.y);
             _content.cellSize = new Vector2(min / Size.x,
@@ -37,7 +41,7 @@ public class SlidingPuzzle : MonoBehaviour
 
             _pieces = new SlidingPiece[Size.x, Size.y];
             
-            Initalize(CrateConfig.Instance.VehicleTypes[Random.Range(0, CrateConfig.Instance.VehicleTypes.Count)]);
+            Initalize(CrateConfig.Instance.VehicleTypes[_random.Next(0,CrateConfig.Instance.VehicleTypes.Count-1)]);
         };
     }
 
@@ -65,10 +69,10 @@ public class SlidingPuzzle : MonoBehaviour
         var currentIndex = 0;
         for (int i = 0; i < 30; i++)
         {
-            var piece = _pieces[Random.Range(0, Size.x), Random.Range(0, Size.y)];
+            var piece = _pieces[_random.Next(0,Size.x),_random.Next(0,Size.y)];
             while (GetEmptyNeighbour(piece) == null && !oldPieces.ToList().Contains(piece))
             {
-                piece = _pieces[Random.Range(0, Size.x), Random.Range(0, Size.y)];
+                piece = _pieces[_random.Next(0,Size.x),_random.Next(0,Size.y)];
             }
 
             oldPieces[currentIndex++ % (Math.Max(Size.x,Size.y)*2)] = piece;
@@ -121,10 +125,10 @@ public class SlidingPuzzle : MonoBehaviour
             if (finished)
             {
                 _mainManager.PlaySound(_mainManager.PuzzleSolved);
-                var newType = CrateConfig.Instance.VehicleTypes[Random.Range(0, CrateConfig.Instance.VehicleTypes.Count)];
+                var newType = CrateConfig.Instance.VehicleTypes[_random.Next(0,CrateConfig.Instance.VehicleTypes.Count-1)];
                 while (newType == _currentType)
                 {
-                    newType = CrateConfig.Instance.VehicleTypes[Random.Range(0, CrateConfig.Instance.VehicleTypes.Count)];
+                    newType = CrateConfig.Instance.VehicleTypes[_random.Next(0,CrateConfig.Instance.VehicleTypes.Count-1)];
                 }
                 StartCoroutine(Wait());
                 IEnumerator Wait()

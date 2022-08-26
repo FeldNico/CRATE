@@ -41,15 +41,15 @@ public class CrateConfig :ScriptableObject
     private int _maxVehiclesPerTypePerDay= 2;
     public int MaxVehiclesPerTypePerDay => _maxVehiclesPerTypePerDay;
 
+    [SerializeField] private int _seed = 631558452;
+    public int Seed => _seed;
+
     [SerializeField,NonReorderable] private List<string> _prefixes = new List<string>();
     public List<string> Prefixes => _prefixes;
     
     [SerializeField,NonReorderable] private List<string> _suffixes = new List<string>();
     public List<string> Suffixes => _suffixes;
 
-    [SerializeField]
-    public List<AssignmentType> AssignmentTypes = new List<AssignmentType>();
-    
     public Dictionary<VehicleType,int> GetFleet()
     {
         var dict = new Dictionary<VehicleType, int>();
