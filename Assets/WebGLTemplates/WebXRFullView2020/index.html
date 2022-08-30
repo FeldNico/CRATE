@@ -60,6 +60,7 @@
       var script = document.createElement("script");
       script.src = loaderUrl;
       script.onload = () => {
+          
        if (fullscreenButton)
           {
             fullscreenButton.onclick = () => {
@@ -72,7 +73,7 @@
           setTimeout(() => {
               const urlParams = new URLSearchParams(window.location.search);
               console.log(urlParams.get('test')+" : "+urlParams.get('duration'));
-            unityInstance.SendMessage("MainManager","OnExperimentStartMessage",urlParams.get('test')+";"+urlParams.get('duration'));
+              unityInstance.SendMessage("MainManager","OnExperimentStartMessage",urlParams.get('test')+";"+urlParams.get('duration'));
           }, 3000);
            
         }).catch((message) => {
