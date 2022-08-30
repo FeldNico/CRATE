@@ -52,12 +52,6 @@ public class MainManager : MonoBehaviour
         }
         else
         {
-            StartCoroutine(Wait());
-            IEnumerator Wait()
-            {
-                yield return new WaitForSeconds(5f);
-                FindObjectOfType<LogManager>().DownloadFiles();
-            }
             var finishedEvents = 0;
             var finishedPuzzles = 0;
             SlidingPuzzle.OnNewPuzzle += _ =>
