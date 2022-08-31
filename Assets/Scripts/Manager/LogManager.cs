@@ -20,6 +20,9 @@ public class LogManager : MonoBehaviour
     
     [DllImport("__Internal")]
     public static extern void OnStart(string isTest);
+    
+    [DllImport("__Internal")]
+    public static extern void OnLog(string isTest);
 
     private MainManager _mainManager;
     private Dictionary<string, StreamWriter> _writers = new();
@@ -43,7 +46,7 @@ public class LogManager : MonoBehaviour
 #if !UNITY_EDITOR
             OnStart(_mainManager.IsTest? "1" : "0");
 #endif            
-            LogMessage("START");
+            LogMessage("START;"+(_mainManager.IsTest? "1" : "0"));
             
         };
 
@@ -130,6 +133,7 @@ public class LogManager : MonoBehaviour
         var now = DateTimeOffset.Now;
         var msg = now.ToString("dd/MM/yyyy HH:mm:ss.fff") + ";" + now.ToUnixTimeMilliseconds() + ";" + message;
         Debug.Log(msg);
+        OnLog(Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(message)));
         _writers[path].WriteLine(msg);
     }
     
