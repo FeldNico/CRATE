@@ -50,6 +50,19 @@ public class VehicleFleetPanel: MonoBehaviour
     private void Update()
     {
         _countLabel.text = _vehicles.Count(vehicle => !vehicle.IsBonus).ToString();
+        
+        if (_vehicles.Count(vehicle => !vehicle.IsBonus) == 0)
+        {
+            _countLabel.faceColor = Color.red;
+        }
+        else if (_vehicles.Count(vehicle => !vehicle.IsBonus) == 1)
+        {
+            _countLabel.faceColor = new Color(1f,0.533f,0f);
+        }
+        else
+        {
+            _countLabel.faceColor = Color.black;
+        }
         var bonusCount = _vehicles.Count(vehicle => vehicle.IsBonus);
         _bonusCountLabel.text = bonusCount == 0 ? "" : "+"+bonusCount;
     }

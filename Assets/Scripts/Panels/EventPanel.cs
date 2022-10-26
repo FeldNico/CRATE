@@ -71,6 +71,7 @@ public class EventPanel : MonoBehaviour
     {
         AssignmentType.OnWaitPerfom.Invoke(AssignmentType);
         _isProgressing = true;
+        _deadlineLabel.faceColor = Color.black;
         _deadlineLabel.text = "-";
         _startButton.interactable = false;
         foreach (var panel in _vehiclePanels)
@@ -119,6 +120,21 @@ public class EventPanel : MonoBehaviour
         }
         var daysLeft = _deadline - ((int) _timeManager.Day - _startDay);
         _deadlineLabel.text = daysLeft + " Tage";
+        if (_deadline <= AssignmentType.Days * 2f)
+        {
+            if (_deadline <= AssignmentType.Days)
+            {
+                _deadlineLabel.faceColor = Color.red;
+            }
+            else
+            {
+                _deadlineLabel.faceColor = new Color(1f,0.533f,0f);
+            }
+        }
+        else
+        {
+            _deadlineLabel.faceColor = Color.black;
+        }
         if (daysLeft < 0 && _progressBar.value <=0.8f)
         {
             AssignmentType.OnAssignmentDeadline.Invoke(AssignmentType,true);

@@ -133,7 +133,9 @@ public class LogManager : MonoBehaviour
         var now = DateTimeOffset.Now;
         var msg = now.ToString("dd/MM/yyyy HH:mm:ss.fff") + ";" + now.ToUnixTimeMilliseconds() + ";" + message;
         Debug.Log(msg);
+#if !UNITY_EDITOR
         OnLog(Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(message)));
+#endif
         _writers[path].WriteLine(msg);
     }
     

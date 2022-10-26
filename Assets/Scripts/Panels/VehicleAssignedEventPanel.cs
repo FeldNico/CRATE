@@ -44,7 +44,7 @@ public class VehicleAssignedEventPanel: MonoBehaviour
             if (IsSatisfied)
             {
                 MissClick?.Invoke(Type);
-                FindObjectOfType<PointsPanel>().Points -= 1;
+                FindObjectOfType<PointsPanel>().Points -= 10;
                 return;
             }
             var vehicle = _fleetPanel.RequestVehicle(Type);
@@ -55,7 +55,7 @@ public class VehicleAssignedEventPanel: MonoBehaviour
             }
             else
             {
-                FindObjectOfType<PointsPanel>().Points -= 1;
+                FindObjectOfType<PointsPanel>().Points -= 10;
             }
         });
         _removeButton.onClick.AddListener(() =>

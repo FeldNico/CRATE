@@ -41,7 +41,7 @@ public class SlidingPuzzle : MonoBehaviour
 
             _pieces = new SlidingPiece[Size.x, Size.y];
             
-            Initalize(CrateConfig.Instance.VehicleTypes[_random.Next(0,CrateConfig.Instance.VehicleTypes.Count-1)]);
+            Initalize(CrateConfig.Instance.VehicleTypes[_random.Next(0,CrateConfig.Instance.VehicleTypes.Count)]);
         };
     }
 
@@ -125,10 +125,10 @@ public class SlidingPuzzle : MonoBehaviour
             if (finished)
             {
                 _mainManager.PlaySound(_mainManager.PuzzleSolved);
-                var newType = CrateConfig.Instance.VehicleTypes[_random.Next(0,CrateConfig.Instance.VehicleTypes.Count-1)];
+                var newType = CrateConfig.Instance.VehicleTypes[_random.Next(0,CrateConfig.Instance.VehicleTypes.Count)];
                 while (newType == _currentType)
                 {
-                    newType = CrateConfig.Instance.VehicleTypes[_random.Next(0,CrateConfig.Instance.VehicleTypes.Count-1)];
+                    newType = CrateConfig.Instance.VehicleTypes[_random.Next(0,CrateConfig.Instance.VehicleTypes.Count)];
                 }
                 StartCoroutine(Wait());
                 IEnumerator Wait()

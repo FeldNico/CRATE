@@ -53,7 +53,26 @@ public class AssignmentPanel : MonoBehaviour
         _button.interactable = interactable;
 
         var deadline = (int) (_assignmentType.Days * 3f) - ((int) FindObjectOfType<TimeManager>().Day - _startDay);
-        _daysLabel.text = "Dauer:\t "+_assignmentType.Days+" Tage\nDeadline in:\t "+deadline+" Tagen\nPunkte:\t "+_assignmentType.Difficulty+" Punkte";
+        if (deadline <= _assignmentType.Days * 2f)
+        {
+            if (deadline <= _assignmentType.Days)
+            {
+                _daysLabel.faceColor = Color.white;
+                _daysLabel.text = "<color=\"black\">Dauer:\t "+_assignmentType.Days+" Tage\n<color=\"red\">Deadline in:\t "+deadline+" Tagen</color>\nPunkte:\t "+_assignmentType.Difficulty+" Punkte</color>";
+            }
+            else
+            {
+                _daysLabel.faceColor = Color.white;
+                _daysLabel.text = "<color=\"black\">Dauer:\t "+_assignmentType.Days+" Tage\n<color=#FF8800>Deadline in:\t "+deadline+" Tagen</color>\nPunkte:\t "+_assignmentType.Difficulty+" Punkte</color>";
+
+            }
+        }
+        else
+        {
+            _daysLabel.faceColor = Color.black;
+            _daysLabel.text = "Dauer:\t "+_assignmentType.Days+" Tage\nDeadline in:\t "+deadline+" Tagen\nPunkte:\t "+_assignmentType.Difficulty+" Punkte";
+        }
+        
         if (deadline < 0)
         {
             FindObjectOfType<PointsPanel>().Points -= _assignmentType.Difficulty / 4;
