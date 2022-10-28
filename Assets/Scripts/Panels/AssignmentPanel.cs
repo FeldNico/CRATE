@@ -53,9 +53,9 @@ public class AssignmentPanel : MonoBehaviour
         _button.interactable = interactable;
 
         var deadline = (int) (_assignmentType.Days * 3f) - ((int) FindObjectOfType<TimeManager>().Day - _startDay);
-        if (deadline <= _assignmentType.Days * 2f)
+        if (deadline <= 3)
         {
-            if (deadline <= _assignmentType.Days)
+            if (deadline <= 1)
             {
                 _daysLabel.faceColor = Color.white;
                 _daysLabel.text = "<color=\"black\">Dauer:\t "+_assignmentType.Days+" Tage\n<color=\"red\">Deadline in:\t "+deadline+" Tagen</color>\nPunkte:\t "+_assignmentType.Difficulty+" Punkte</color>";
@@ -75,7 +75,7 @@ public class AssignmentPanel : MonoBehaviour
         
         if (deadline < 0)
         {
-            FindObjectOfType<PointsPanel>().Points -= _assignmentType.Difficulty / 4;
+            FindObjectOfType<PointsPanel>().Points -= _assignmentType.Difficulty / 2;
             AssignmentType.OnAssignmentDeadline?.Invoke(_assignmentType,false);
             Destroy(gameObject);
         }

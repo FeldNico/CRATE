@@ -61,7 +61,7 @@ public class EventPanel : MonoBehaviour
         {
             _mainManager.PlaySound(_mainManager.EventClosed);
             AssignmentType.OnEventQuit?.Invoke(AssignmentType);
-            FindObjectOfType<PointsPanel>().Points -= AssignmentType.Difficulty / 2;
+            FindObjectOfType<PointsPanel>().Points -= AssignmentType.Difficulty;
             Destroy(gameObject);
         });
     }
@@ -120,9 +120,9 @@ public class EventPanel : MonoBehaviour
         }
         var daysLeft = _deadline - ((int) _timeManager.Day - _startDay);
         _deadlineLabel.text = daysLeft + " Tage";
-        if (_deadline <= AssignmentType.Days * 2f)
+        if (_deadline <= 3)
         {
-            if (_deadline <= AssignmentType.Days)
+            if (_deadline <= 1)
             {
                 _deadlineLabel.faceColor = Color.red;
             }
@@ -138,7 +138,7 @@ public class EventPanel : MonoBehaviour
         if (daysLeft < 0 && _progressBar.value <=0.8f)
         {
             AssignmentType.OnAssignmentDeadline.Invoke(AssignmentType,true);
-            FindObjectOfType<PointsPanel>().Points -= AssignmentType.Difficulty / 3;
+            FindObjectOfType<PointsPanel>().Points -= AssignmentType.Difficulty / 2;
             Destroy(gameObject);
             return;
         }
