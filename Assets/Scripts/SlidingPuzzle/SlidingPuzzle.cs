@@ -67,16 +67,19 @@ public class SlidingPuzzle : MonoBehaviour
 
         var oldPieces = new SlidingPiece[Math.Max(Size.x,Size.y)*2];
         var currentIndex = 0;
-        for (int i = 0; i < 30; i++)
+        while (_pieces.Cast<SlidingPiece>().All(piece => piece.IsCorrect))
         {
-            var piece = _pieces[_random.Next(0,Size.x),_random.Next(0,Size.y)];
-            while (GetEmptyNeighbour(piece) == null && !oldPieces.ToList().Contains(piece))
+            for (int i = 0; i < 30; i++)
             {
-                piece = _pieces[_random.Next(0,Size.x),_random.Next(0,Size.y)];
-            }
+                var piece = _pieces[_random.Next(0,Size.x),_random.Next(0,Size.y)];
+                while (GetEmptyNeighbour(piece) == null && !oldPieces.ToList().Contains(piece))
+                {
+                    piece = _pieces[_random.Next(0,Size.x),_random.Next(0,Size.y)];
+                }
 
-            oldPieces[currentIndex++ % (Math.Max(Size.x,Size.y)*2)] = piece;
-            SwapPiece(piece,false);
+                oldPieces[currentIndex++ % (Math.Max(Size.x,Size.y)*2)] = piece;
+                SwapPiece(piece,false);
+            }
         }
     }
 
@@ -109,8 +112,6 @@ public class SlidingPuzzle : MonoBehaviour
         _pieces[posA.x,posA.y] = empty;
         empty.Position = posA;
         
-        
-
         if (check)
         {
             var finished = true;

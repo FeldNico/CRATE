@@ -120,9 +120,9 @@ public class EventPanel : MonoBehaviour
         }
         var daysLeft = _deadline - ((int) _timeManager.Day - _startDay);
         _deadlineLabel.text = daysLeft + " Tage";
-        if (_deadline <= 3)
+        if (daysLeft <= 3)
         {
-            if (_deadline <= 1)
+            if (daysLeft <= 1)
             {
                 _deadlineLabel.faceColor = Color.red;
             }
