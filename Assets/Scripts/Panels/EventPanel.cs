@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -37,17 +38,20 @@ public class EventPanel : MonoBehaviour
     private MainManager _mainManager;
     private GameObject _hover;
 
+    private LanguageDictionary _languageDictionary;
+
     public void Initialize(AssignmentType type, int deadline)
     {
         name = type.Name;
         _timeManager = FindObjectOfType<TimeManager>();
         _mainManager = FindObjectOfType<MainManager>();
+        _languageDictionary = Resources.Load<LanguageDictionary>("Config/LanguageDictionary");
         AssignmentType = type;
         _deadline = deadline;
         _nameLabel.text = AssignmentType.Name;
-        _deadlineLabel.text = _deadline + " Tage";
-        _durationLabel.text = AssignmentType.Days+" Tage";
-        _pointsLabel.text = AssignmentType.Difficulty + " Punkte";
+        _deadlineLabel.text = _deadline.ToString();
+        _durationLabel.text = AssignmentType.Days.ToString();
+        _pointsLabel.text = AssignmentType.Difficulty.ToString();
         _startDay = (int) _timeManager.Day;
         foreach (var (vehicleType,count) in type.VehiclesPerDay)
         {
@@ -83,7 +87,7 @@ public class EventPanel : MonoBehaviour
         IEnumerator Animation()
         {
             var startDay = Time.time;
-            _startButton.GetComponentInChildren<TMP_Text>().text = "Event startet am nächsten Tag.";
+            _startButton.GetComponentInChildren<TMP_Text>().text = _languageDictionary.Translate("event_next_day");
             var duration = _timeManager.GetTimeUntilNextDay();
             _progressBar.value = 0f;
             while (Time.time < startDay + duration)
@@ -93,14 +97,14 @@ public class EventPanel : MonoBehaviour
             }
             AssignmentType.OnStartPerfom.Invoke(AssignmentType);
             _progressBar.value = 1;
-            _startButton.GetComponentInChildren<TMP_Text>().text = "Event läuft...";
+            _startButton.GetComponentInChildren<TMP_Text>().text = _languageDictionary.Translate("event_running");
             startDay = Time.time;
             duration = _timeManager.GetTimeStampInDays(AssignmentType.Days) - Time.time;
             _progressBar.value = 0f;
             while (Time.time < startDay + duration)
             {
                 yield return null;
-                _durationLabel.text = "Noch " + ((int) (((duration+startDay) -Time.time) / _timeManager.DayDuration) +1) + " Tag(e)";
+                _durationLabel.text = ((int) (((duration+startDay) -Time.time) / _timeManager.DayDuration) +1).ToString();
                 _progressBar.value = (Time.time - startDay)/duration;
             }
             _progressBar.value = 1;
@@ -114,26 +118,35 @@ public class EventPanel : MonoBehaviour
 
     private void Update()
     {
-        if (_isProgressing)
+        if (_isProgressing || _languageDictionary == null)
         {
             return;
         }
         var daysLeft = _deadline - ((int) _timeManager.Day - _startDay);
-        _deadlineLabel.text = daysLeft + " Tage";
+        _deadlineLabel.text = daysLeft.ToString();
         if (daysLeft <= 3)
         {
             if (daysLeft <= 1)
             {
-                _deadlineLabel.faceColor = Color.red;
+                foreach (var child in _deadlineLabel.GetComponentsInChildren<TMP_Text>())
+                {
+                    child.faceColor = Color.red;
+                }
             }
             else
             {
-                _deadlineLabel.faceColor = new Color(1f,0.533f,0f);
+                foreach (var child in _deadlineLabel.GetComponentsInChildren<TMP_Text>())
+                {
+                    child.faceColor = new Color(1f,0.533f,0f);
+                }
             }
         }
         else
         {
-            _deadlineLabel.faceColor = Color.black;
+            foreach (var child in _deadlineLabel.GetComponentsInChildren<TMP_Text>())
+            {
+                child.faceColor = Color.black;
+            }
         }
         if (daysLeft < 0 && _progressBar.value <=0.8f)
         {
@@ -147,11 +160,12 @@ public class EventPanel : MonoBehaviour
         _startButton.interactable = _vehiclePanels.All(panel => panel.IsSatisfied);
         if (_startButton.interactable)
         {
-            _startButton.GetComponentInChildren<TMP_Text>().text = "Sende Geschäfte";
+            _startButton.GetComponentInChildren<TMP_Text>().text = _languageDictionary.Translate("send_rides");
         }
         else
         {
-            _startButton.GetComponentInChildren<TMP_Text>().text = "Geschäfte nicht zugewiesen";
+           
+            _startButton.GetComponentInChildren<TMP_Text>().text =  _languageDictionary.Translate("rides_not_assigned");
         }
     }
 

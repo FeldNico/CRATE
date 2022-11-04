@@ -11,7 +11,9 @@ public class AssignmentPanel : MonoBehaviour
     
     [SerializeField] private GameObject _vehicleAssignmentPanelPrefab;
     [SerializeField] private TMP_Text _label;
-    [SerializeField] private TMP_Text _daysLabel;
+    [SerializeField] private TMP_Text _daysCountLabel;
+    [SerializeField] private TMP_Text _deadlineCountLabel;
+    [SerializeField] private TMP_Text _pointsCountLabel;
     [SerializeField] private RectTransform _content;
     [SerializeField] private Button _button;
 
@@ -53,24 +55,33 @@ public class AssignmentPanel : MonoBehaviour
         _button.interactable = interactable;
 
         var deadline = (int) (_assignmentType.Days * 3f) - ((int) FindObjectOfType<TimeManager>().Day - _startDay);
+        _daysCountLabel.text = _assignmentType.Days.ToString();
+        _deadlineCountLabel.text = deadline.ToString();
+        _pointsCountLabel.text = _assignmentType.Difficulty.ToString();
+        
         if (deadline <= 3)
         {
             if (deadline <= 1)
             {
-                _daysLabel.faceColor = Color.white;
-                _daysLabel.text = "<color=\"black\">Dauer:\t "+_assignmentType.Days+" Tage\n<color=\"red\">Deadline in:\t "+deadline+" Tagen</color>\nPunkte:\t "+_assignmentType.Difficulty+" Punkte</color>";
+                foreach (var child in _deadlineCountLabel.GetComponentsInChildren<TMP_Text>())
+                {
+                    child.faceColor = Color.red;
+                }
             }
             else
             {
-                _daysLabel.faceColor = Color.white;
-                _daysLabel.text = "<color=\"black\">Dauer:\t "+_assignmentType.Days+" Tage\n<color=#FF8800>Deadline in:\t "+deadline+" Tagen</color>\nPunkte:\t "+_assignmentType.Difficulty+" Punkte</color>";
-
+                foreach (var child in _deadlineCountLabel.GetComponentsInChildren<TMP_Text>())
+                {
+                    child.faceColor = new Color(1f,0.533f,0f);
+                }
             }
         }
         else
         {
-            _daysLabel.faceColor = Color.black;
-            _daysLabel.text = "Dauer:\t "+_assignmentType.Days+" Tage\nDeadline in:\t "+deadline+" Tagen\nPunkte:\t "+_assignmentType.Difficulty+" Punkte";
+            foreach (var child in _deadlineCountLabel.GetComponentsInChildren<TMP_Text>())
+            {
+                child.faceColor = Color.black;
+            }
         }
         
         if (deadline < 0)
