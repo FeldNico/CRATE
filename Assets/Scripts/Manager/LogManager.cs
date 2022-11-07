@@ -92,9 +92,17 @@ public class LogManager : MonoBehaviour
         {
             LogMessage("VEHICLE_REQUEST;"+assignmentType+";"+(vehicle != null ? vehicle : "NULL"));
         };
-        FleetPanel.OnVehicleTypeReturn += vehicle =>
+        FleetPanel.OnVehicleTypeReturn += (vehicle,manual) =>
         {
-            LogMessage("VEHICLE_RETURN;"+vehicle);
+            if (manual)
+            {
+                LogMessage("VEHICLE_RETURN_MANUAL;"+vehicle);
+            }
+            else
+            {
+                LogMessage("VEHICLE_RETURN_AUTOMATIC;"+vehicle);
+            }
+            
         };
         SlidingPuzzle.OnNewPuzzle += type =>
         {
@@ -110,7 +118,7 @@ public class LogManager : MonoBehaviour
         };
         VehicleAssignedEventPanel.MissClick += type =>
         {
-            LogMessage("VEHICLE;MISS_CLICK;"+type);
+            LogMessage("VEHICLE_MISS_CLICK;"+type);
         };
     }
     
@@ -134,7 +142,7 @@ public class LogManager : MonoBehaviour
         var msg = now.ToString("dd/MM/yyyy HH:mm:ss.fff") + ";" + now.ToUnixTimeMilliseconds() + ";" + message;
         Debug.Log(msg);
 #if !UNITY_EDITOR
-        OnLog(Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(message)));
+        OnLog(Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(now.ToUnixTimeMilliseconds().ToString() + ";"+message)));
 #endif
         _writers[path].WriteLine(msg);
     }

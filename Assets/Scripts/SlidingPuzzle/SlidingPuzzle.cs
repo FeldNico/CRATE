@@ -134,7 +134,7 @@ public class SlidingPuzzle : MonoBehaviour
                 StartCoroutine(Wait());
                 IEnumerator Wait()
                 {
-                    FindObjectOfType<FleetPanel>().ReturnVehicle(new Vehicle(_currentType,true));
+                    FindObjectOfType<FleetPanel>().ReturnVehicle(new Vehicle(_currentType,true),false);
                     yield return new WaitForSeconds(1);
                     Initalize(newType);
                     IsInteractable = true;

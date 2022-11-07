@@ -70,6 +70,7 @@
                 }
                 fullscreenButton.clicked = true;
             fullscreenButton.style.display = "none";
+            canvas.requestFullscreen();
             createUnityInstance(canvas, config, (progress) => {
           progressBarFull.style.width = 100 * progress + "%";
         }).then((instance) => {
@@ -78,9 +79,9 @@
           unityInstance.SetFullscreen(1);
           setTimeout(() => {
               const urlParams = new URLSearchParams(window.location.search);
-              console.log(urlParams.get('test')+" : "+urlParams.get('duration'));
-              unityInstance.SendMessage("MainManager","OnExperimentStartMessage",urlParams.get('test')+";"+urlParams.get('duration'));
-          }, 3000);
+              console.log(urlParams.get('test')+" : "+urlParams.get('duration')+" : "+urlParams.get('language'));
+              unityInstance.SendMessage("MainManager","OnExperimentStartMessage",urlParams.get('test')+";"+urlParams.get('duration')+";"+urlParams.get('language'));
+          }, 2000);
            
         }).catch((message) => {
           alert(message);

@@ -65,7 +65,7 @@ public class VehicleAssignedEventPanel: MonoBehaviour
             if (vehicle != null)
             {
                 _vehicles.Remove(vehicle);
-                _fleetPanel.ReturnVehicle(vehicle);
+                _fleetPanel.ReturnVehicle(vehicle,true);
             }
         });
     }
@@ -90,7 +90,7 @@ public class VehicleAssignedEventPanel: MonoBehaviour
     {
         foreach (var vehicle in _vehicles.Where(vehicle => !vehicle.IsBonus))
         {
-            _fleetPanel.ReturnVehicle(vehicle);
+            _fleetPanel.ReturnVehicle(vehicle,false);
         }
     }
 }

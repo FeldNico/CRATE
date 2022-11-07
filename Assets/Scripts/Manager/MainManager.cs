@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
+using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
+using Config;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -28,11 +31,14 @@ public class MainManager : MonoBehaviour
     
     [field:SerializeField]
     public AudioClip PuzzleSolved { private set; get; }
+
+    [SerializeField]
+    private TMP_Text _labelCountdown;
     
     private void Start()
     {
         #if UNITY_EDITOR
-        OnExperimentStartMessage("0;60");
+        OnExperimentStartMessage("0;60;AO01");
         #endif
     }
 
@@ -40,36 +46,54 @@ public class MainManager : MonoBehaviour
     {
         IsTest = config.Split(";")[0] != "0";
         Duration = int.Parse(config.Split(";")[1]);
-        OnExperimentStart?.Invoke();
-        if (!IsTest)
+        Resources.Load<LanguageDictionary>("Config/LanguageDictionary").CurrentLanguage = config.Split(";")[2] == "AO01"
+            ? LanguageDictionary.Language.DE
+            : LanguageDictionary.Language.EN;
+
+        StartCoroutine(StartWait());
+        IEnumerator StartWait()
         {
-            StartCoroutine(WaitForEnd());
-            IEnumerator WaitForEnd()
+            var startTime = Time.time;
+            while (Time.time - startTime <= 10)
             {
-                yield return new WaitForSeconds(Duration);
-                FindObjectOfType<LogManager>().DownloadFiles();
+                var remainingSeconds = 10 - (Time.time - startTime);
+                _labelCountdown.text = "\n\n" + remainingSeconds.ToString("F1",CultureInfo.InvariantCulture)+"s";
+                yield return null;
             }
-        }
-        else
-        {
-            var finishedEvents = 0;
-            var finishedPuzzles = 0;
-            SlidingPuzzle.OnNewPuzzle += _ =>
+        
+            _labelCountdown.transform.parent.gameObject.SetActive(false);
+        
+            OnExperimentStart?.Invoke();
+            if (!IsTest)
             {
-                finishedPuzzles++;
-                if (finishedPuzzles > 0 && finishedEvents > 2)
+                StartCoroutine(WaitForEnd());
+                IEnumerator WaitForEnd()
                 {
+                    yield return new WaitForSeconds(Duration);
                     FindObjectOfType<LogManager>().DownloadFiles();
                 }
-            };
-            AssignmentType.OnEventEnd += _ =>
+            }
+            else
             {
-                finishedEvents++;
-                if (finishedPuzzles > 0 && finishedEvents > 2)
+                var finishedEvents = 0;
+                var finishedPuzzles = 0;
+                SlidingPuzzle.OnNewPuzzle += _ =>
                 {
-                    FindObjectOfType<LogManager>().DownloadFiles();
-                }
-            };
+                    finishedPuzzles++;
+                    if (finishedPuzzles > 0 && finishedEvents > 2)
+                    {
+                        FindObjectOfType<LogManager>().DownloadFiles();
+                    }
+                };
+                AssignmentType.OnEventEnd += _ =>
+                {
+                    finishedEvents++;
+                    if (finishedPuzzles > 0 && finishedEvents > 2)
+                    {
+                        FindObjectOfType<LogManager>().DownloadFiles();
+                    }
+                };
+            }
         }
     }
 

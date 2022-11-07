@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class FleetPanel : MonoBehaviour
 {
     public static UnityAction<AssignmentType,Vehicle> OnVehicleTypeRequest;
-    public static UnityAction<Vehicle> OnVehicleTypeReturn;
+    public static UnityAction<Vehicle,bool> OnVehicleTypeReturn;
 
     [SerializeField] private GameObject _vehicleFleetPrefab;
 
@@ -39,16 +39,15 @@ public class FleetPanel : MonoBehaviour
         return vehicle;
     }
 
-    public void ReturnVehicle(Vehicle vehicle)
+    public void ReturnVehicle(Vehicle vehicle,bool manual)
     {
-        OnVehicleTypeReturn?.Invoke(vehicle);
+        OnVehicleTypeReturn?.Invoke(vehicle,manual);
         var panel = GetComponentsInChildren<VehicleFleetPanel>().FirstOrDefault(p => p.Type == vehicle.Type);
         if (panel != null)
         {
             panel.ReturnVehicle(vehicle);
         }
     }
-    
-    
+
 }
 
