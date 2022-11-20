@@ -43,6 +43,9 @@ public class CrateConfig :ScriptableObject
 
     [SerializeField] private int _seed = 631558452;
     public int Seed => _seed;
+    
+    [SerializeField] private int _demoSeed = 11235813;
+    public int DemoSeed => _demoSeed;
 
     [SerializeField,NonReorderable] private List<string> _prefixes = new List<string>();
     public List<string> Prefixes => _prefixes;

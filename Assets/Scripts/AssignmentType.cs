@@ -82,7 +82,7 @@ public class AssignmentType
         if (_random == null)
         {
             var isTest = GameObject.FindObjectOfType<MainManager>().IsTest;
-            _random = isTest ? new Random() : new Random(CrateConfig.Instance.Seed);
+            _random = isTest ? new Random(CrateConfig.Instance.DemoSeed) : new Random(CrateConfig.Instance.Seed);
         }
 
         (int, int, Dictionary<VehicleType, int>) result = (-1, 0, null);

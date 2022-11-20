@@ -30,7 +30,7 @@ public class SlidingPuzzle : MonoBehaviour
         {
             if (_random == null)
             {
-                _random = _mainManager.IsTest ? new Random() : new Random(CrateConfig.Instance.Seed);
+                _random = _mainManager.IsTest ? new Random(CrateConfig.Instance.DemoSeed) : new Random(CrateConfig.Instance.Seed);
             }
             
             var sizeDelta = (_content.transform as RectTransform).sizeDelta;
